@@ -1,0 +1,22 @@
+name: Security & Code Quality
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  semgrep:
+    name: Semgrep - seguridad y code smells
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Ejecutar Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/owasp-top-ten
+            p/code-quality
+        continue-on-error: true
