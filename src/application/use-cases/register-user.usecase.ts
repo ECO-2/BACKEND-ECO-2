@@ -5,6 +5,7 @@ import { AppError } from "@/core/errors/AppError"
 
 const registerSchema = z.object({
   email: z.email(),
+  username: z.string().min(3).max(30).optional(),
   password: z.string().min(6)
 })
 

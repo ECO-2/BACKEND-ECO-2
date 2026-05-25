@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 
 export const createUser = async (data: {
   email: string
+  username?: string | null
   password_hash: string | null
   provider?: string
   provider_id?: string | null
@@ -9,6 +10,7 @@ export const createUser = async (data: {
   return prisma.user.create({
     data: {
       email: data.email,
+      username: data.username ?? null,
       password_hash: data.password_hash,
       provider: data.provider ?? "local",
       provider_id: data.provider_id ?? null,

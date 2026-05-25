@@ -1,7 +1,7 @@
 export const openApiSpec = {
   openapi: "3.0.0",
   info: {
-    title: "Sésamo API",
+    title: "ECO2 API",
     version: "1.0.0",
     description: "Authentication system API",
   },

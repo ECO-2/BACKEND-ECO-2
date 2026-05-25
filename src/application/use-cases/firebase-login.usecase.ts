@@ -29,6 +29,7 @@ export const firebaseLogin = async (input: unknown) => {
   if (!user) {
     user = await createUser({
       email,
+      username: decoded.name ?? null,
       password_hash: null,
       provider: "firebase",
       provider_id: decoded.uid,
