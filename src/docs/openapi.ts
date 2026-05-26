@@ -3,7 +3,7 @@ export const openApiSpec = {
   info: {
     title: "ECO2 API",
     version: "1.0.0",
-    description: "Authentication system API",
+    description: `<p>API for ECO2 application, providing authentication and user management functionalities.</p><div style="text-align:center; margin-bottom: 16px;"><img src="/logo.png" alt="ECO2 Logo" style="height: 10px;" /></div>`,
   },
   components: {
     securitySchemes: {

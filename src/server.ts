@@ -29,7 +29,7 @@ app.use(
     theme: "moon",     
     url: "/openapi.json",
     pageTitle: "ECO2 API Docs",
-    favicon: '/logo.png'
+    favicon: '/icono.png'
   })
 )
 
