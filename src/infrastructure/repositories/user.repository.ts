@@ -27,3 +27,22 @@ export const findUserByEmail = async (email: string) => {
 export const findUserById = async (id: string) => {
   return prisma.user.findUnique({ where: { id } })
 }
+
+export const findUserByUsername = async (username: string) => {
+  return prisma.user.findUnique({ where: { username } })
+}
+
+export const updateUserOnboarding = async (
+  userId: string,
+  data: {
+    username?: string
+    gender?: "male" | "female" | "other" | "prefer_not_to_say"
+    birth_day?: Date
+    onboarding_completed: boolean
+  }
+) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data
+  })
+}

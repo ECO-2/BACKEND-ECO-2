@@ -17,6 +17,7 @@ router.get("/me", authenticate, async (req, res, next) => {
       role: user.role,
       plan_type: user.plan_type,
       mfa_enabled: user.mfa_enabled,
+      onboarding_completed: user.onboarding_completed,
       created_at: user.created_at,
     })
   } catch (error) {
