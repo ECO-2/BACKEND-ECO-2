@@ -186,20 +186,20 @@ export const openApiSpec = {
         security: [{ bearerAuth: [] }],
         responses: {
           200: {
-            description: "Returns the authenticated user payload",
+            description: "Returns the authenticated user's profile",
             content: {
               "application/json": {
                 schema: {
                   type: "object",
                   properties: {
-                    message: { type: "string" },
-                    user: {
-                      type: "object",
-                      properties: {
-                        sub: { type: "string" },
-                        email: { type: "string" },
-                      }
-                    }
+                    id: { type: "string" },
+                    email: { type: "string" },
+                    username: { type: "string", nullable: true },
+                    avatar_url: { type: "string", nullable: true },
+                    role: { type: "string" },
+                    plan_type: { type: "string" },
+                    onboarding_completed: { type: "boolean" },
+                    created_at: { type: "string", format: "date-time" }
                   }
                 }
               }
@@ -209,6 +209,65 @@ export const openApiSpec = {
         }
       }
     },
+    "/user/onboarding": {
+      patch: {
+        tags: ["User"],
+        summary: "Complete user onboarding",
+        description: "Allows the authenticated user to complete their profile after registration. All fields are optional and can be filled progressively.",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  username: {
+                    type: "string",
+                    minLength: 3,
+                    maxLength: 30,
+                    example: "planta_lover"
+                  },
+                  gender: {
+                    type: "string",
+                    enum: ["male", "female", "other", "prefer_not_to_say"],
+                    example: "prefer_not_to_say"
+                  },
+                  birth_day: {
+                    type: "string",
+                    format: "date",
+                    example: "1998-05-12"
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: "Profile updated successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    email: { type: "string" },
+                    username: { type: "string", nullable: true },
+                    gender: { type: "string", nullable: true },
+                    birth_day: { type: "string", format: "date", nullable: true },
+                    onboarding_completed: { type: "boolean" }
+                  }
+                }
+              }
+            }
+          },
+          401: { description: "Missing or invalid token" },
+          409: { description: "Username already taken" },
+          422: { description: "Validation error" }
+        }
+      }
+    }
 
   },
 }
