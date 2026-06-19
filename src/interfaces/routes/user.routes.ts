@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express"
 import { authenticate } from "../middleware/authenticate"
 import { findUserById } from "@/infrastructure/repositories/user.repository"
+import { completeOnboardingController } from "@/interfaces/controllers/onboarding.controller"
 
 const router = Router()
 
@@ -24,5 +25,7 @@ router.get("/me", authenticate, async (req, res, next) => {
     next(error)
   }
 })
+
+router.patch("/onboarding", authenticate, completeOnboardingController)
 
 export default router
