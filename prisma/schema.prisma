@@ -38,6 +38,9 @@ model User {
   created_at          DateTime  @default(now())
   updated_at          DateTime  @updatedAt
   deleted_at          DateTime?
+  notifications_enabled     Boolean   @default(true)
+  reminder_start_hour       Int       @default(8)  
+  reminder_end_hour         Int       @default(21)
 
   sessions Session[]
 }
