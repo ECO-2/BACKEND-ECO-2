@@ -46,3 +46,18 @@ export const updateUserOnboarding = async (
     data
   })
 }
+
+export const updateUserProfile = async (
+  userId: string,
+  data: {
+    username?: string
+    notifications_enabled?: boolean
+    reminder_start_hour?: number
+    reminder_end_hour?: number
+  }
+) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data
+  })
+}
