@@ -267,6 +267,74 @@ export const openApiSpec = {
           422: { description: "Validation error" }
         }
       }
+    },
+    "/user/profile": {
+      patch: {
+        tags: ["User"],
+        summary: "Update user profile and notification preferences",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  username: {
+                    type: "string",
+                    minLength: 3,
+                    maxLength: 30,
+                    example: "planta_lover"
+                  },
+                  notifications_enabled: {
+                    type: "boolean",
+                    example: true
+                  },
+                  reminder_start_hour: {
+                    type: "integer",
+                    minimum: 6,
+                    maximum: 22,
+                    example: 8,
+                    description: "Hour in 24h format (6-22)"
+                  },
+                  reminder_end_hour: {
+                    type: "integer",
+                    minimum: 6,
+                    maximum: 22,
+                    example: 21,
+                    description: "Must be greater than reminder_start_hour"
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: "Profile updated successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    email: { type: "string" },
+                    username: { type: "string", nullable: true },
+                    avatar_url: { type: "string", nullable: true },
+                    notifications_enabled: { type: "boolean" },
+                    reminder_start_hour: { type: "integer" },
+                    reminder_end_hour: { type: "integer" },
+                    onboarding_completed: { type: "boolean" }
+                  }
+                }
+              }
+            }
+          },
+          401: { description: "Missing or invalid token" },
+          409: { description: "Username already taken" },
+          422: { description: "Validation error or invalid hour range" }
+        }
+      }
     }
 
   },
