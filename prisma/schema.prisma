@@ -44,6 +44,7 @@ model User {
 
   sessions Session[]
   rooms Room[]
+  user_plants UserPlant[]
 }
 
 model Session {
@@ -73,4 +74,68 @@ model Room {
   deleted_at DateTime?
 
   user User @relation(fields: [user_id], references: [id])
+}
+
+enum PlantCategory {
+  tropical
+  succulent
+  cactus
+  fern
+  flowering
+  herb
+  tree
+  other
+}
+
+enum LightRequirement {
+  low
+  medium
+  high
+  indirect
+}
+
+enum HumidityPreference {
+  low
+  medium
+  high
+}
+
+enum HealthStatus {
+  excellent
+  good
+  fair
+  poor
+  critical
+}
+
+model PlantSpecies {
+  id                   String   @id @default(uuid())
+  scientific_name      String   @unique
+  common_name          String
+  category             PlantCategory
+  light_requirement    LightRequirement
+  water_frequency_days Int
+  humidity_preference  HumidityPreference
+  air_purification_score Int    @default(0)
+  min_temperature      Int
+  max_temperature      Int
+  created_at           DateTime @default(now())
+
+  user_plants UserPlant[]
+}
+
+model UserPlant {
+  id            String       @id @default(uuid())
+  user_id       String
+  species_id    String
+  nickname      String?
+  health_status HealthStatus @default(good)
+  acquired_at   DateTime     @default(now())
+  last_watered_at DateTime?
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
+  deleted_at    DateTime?
+
+  user    User         @relation(fields: [user_id], references: [id])
+  species PlantSpecies @relation(fields: [species_id], references: [id])
 }
