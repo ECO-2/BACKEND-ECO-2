@@ -557,6 +557,104 @@ export const openApiSpec = {
           404: { description: "Plant not found" }
         }
       }
+    },
+    "/care/tasks": {
+      post: {
+        tags: ["Care"],
+        summary: "Create a care task for a plant",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["user_plant_id", "task_type", "frequency_days", "next_due_at"],
+                properties: {
+                  user_plant_id: { type: "string", format: "uuid" },
+                  task_type: { type: "string", enum: ["watering", "fertilizing", "pruning", "repotting", "misting", "cleaning"] },
+                  frequency_days: { type: "integer", minimum: 1, example: 7 },
+                  next_due_at: { type: "string", format: "date-time" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: { description: "Task created" },
+          401: { description: "Unauthorized" },
+          404: { description: "Plant not found" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
+    "/care/plants/{plantId}/tasks": {
+      get: {
+        tags: ["Care"],
+        summary: "Get all tasks for a plant",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "plantId", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "List of tasks ordered by next_due_at" },
+          401: { description: "Unauthorized" },
+          404: { description: "Plant not found" }
+        }
+      }
+    },
+    "/care/tasks/{taskId}/complete": {
+      patch: {
+        tags: ["Care"],
+        summary: "Complete a task — updates next_due_at and creates a care log automatically",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "taskId", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "Task completed, care log created" },
+          401: { description: "Unauthorized" },
+          404: { description: "Task not found" }
+        }
+      }
+    },
+    "/care/logs": {
+      post: {
+        tags: ["Care"],
+        summary: "Create a manual care log",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["user_plant_id", "task_type"],
+                properties: {
+                  user_plant_id: { type: "string", format: "uuid" },
+                  task_type: { type: "string", enum: ["watering", "fertilizing", "pruning", "repotting", "misting", "cleaning"] },
+                  performed_at: { type: "string", format: "date-time", description: "Defaults to now if not provided" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: { description: "Care log created" },
+          401: { description: "Unauthorized" },
+          404: { description: "Plant not found" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
+    "/care/plants/{plantId}/logs": {
+      get: {
+        tags: ["Care"],
+        summary: "Get care history for a plant",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "plantId", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          200: { description: "List of care logs ordered by performed_at desc" },
+          401: { description: "Unauthorized" },
+          404: { description: "Plant not found" }
+        }
+      }
     }
 
   },
