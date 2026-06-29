@@ -138,4 +138,40 @@ model UserPlant {
 
   user    User         @relation(fields: [user_id], references: [id])
   species PlantSpecies @relation(fields: [species_id], references: [id])
+  tasks     UserPlantTask[]
+  care_logs CareLog[]
+}
+
+enum TaskType {
+  watering
+  fertilizing
+  pruning
+  repotting
+  misting
+  cleaning
+}
+
+model UserPlantTask {
+  id                String    @id @default(uuid())
+  user_plant_id     String
+  task_type         TaskType
+  next_due_at       DateTime
+  last_completed_at DateTime?
+  frequency_days    Int
+  created_at        DateTime  @default(now())
+
+  user_plant UserPlant  @relation(fields: [user_plant_id], references: [id])
+  care_logs  CareLog[]
+}
+
+model CareLog {
+  id            String    @id @default(uuid())
+  user_plant_id String
+  task_id       String?
+  task_type     TaskType
+  performed_at  DateTime  @default(now())
+  created_at    DateTime  @default(now())
+
+  user_plant UserPlant     @relation(fields: [user_plant_id], references: [id])
+  task       UserPlantTask? @relation(fields: [task_id], references: [id])
 }
