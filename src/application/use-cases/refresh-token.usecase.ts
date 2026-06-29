@@ -32,7 +32,7 @@ export const refreshToken = async (input: unknown) => {
 
   await revokeSession(rawToken)
   const newRefreshToken = await createSession(user.id)
-  const accessToken = generateAccessToken({ sub: user.id, email: user.email })
+  const accessToken = generateAccessToken({ sub: user.id, email: user.email, role: user.role })
 
   return { accessToken, refreshToken: newRefreshToken }
 }

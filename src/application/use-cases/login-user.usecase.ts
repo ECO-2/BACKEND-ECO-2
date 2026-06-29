@@ -25,7 +25,7 @@ export const loginUser = async (input: unknown) => {
     throw new AppError("Invalid credentials", 401)
   }
 
-  const accessToken = generateAccessToken({ sub: user.id, email: user.email })
+  const accessToken = generateAccessToken({ sub: user.id, email: user.email, role: user.role })
   const refreshToken = await createSession(user.id)
 
   return { accessToken, refreshToken }

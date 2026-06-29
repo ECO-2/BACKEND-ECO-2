@@ -19,6 +19,7 @@ const getPublicKey = (): string => {
 export interface JwtPayload {
   sub: string 
   email: string
+  role: string  
 }
 
 export const generateAccessToken = (payload: JwtPayload) => {

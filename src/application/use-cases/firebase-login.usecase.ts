@@ -37,7 +37,7 @@ export const firebaseLogin = async (input: unknown) => {
   }
 
   // 4. Emitir tus propios tokens — igual que el login local
-  const accessToken = generateAccessToken({ sub: user.id, email: user.email })
+  const accessToken = generateAccessToken({ sub: user.id, email: user.email, role: user.role })
   const refreshToken = await createSession(user.id)
 
   return { accessToken, refreshToken }
