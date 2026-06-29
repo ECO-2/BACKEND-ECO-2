@@ -655,6 +655,235 @@ export const openApiSpec = {
           404: { description: "Plant not found" }
         }
       }
+    },
+    "/gamification/progress": {
+      get: {
+        tags: ["Gamification"],
+        summary: "Get current user progress",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: {
+            description: "User progress",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    user_id: { type: "string" },
+                    xp: { type: "integer" },
+                    level: { type: "integer" },
+                    streak_days: { type: "integer" },
+                    seeds: { type: "integer" },
+                    updated_at: { type: "string", format: "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          401: { description: "Unauthorized" }
+        }
+      },
+      patch: {
+        tags: ["Gamification"],
+        summary: "Manually update user progress fields",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  xp: { type: "integer", minimum: 0 },
+                  level: { type: "integer", minimum: 1 },
+                  streak_days: { type: "integer", minimum: 0 },
+                  seeds: { type: "integer", minimum: 0 }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "Progress updated" },
+          400: { description: "No fields to update" },
+          401: { description: "Unauthorized" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
+    "/gamification/progress/xp": {
+      post: {
+        tags: ["Gamification"],
+        summary: "Add XP to user",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["amount", "action_type"],
+                properties: {
+                  amount: { type: "integer", minimum: 1, example: 50 },
+                  action_type: { type: "string", example: "plant_watered" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "XP added, returns updated progress" },
+          401: { description: "Unauthorized" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
+    "/gamification/progress/seeds": {
+      post: {
+        tags: ["Gamification"],
+        summary: "Add or spend seeds",
+        description: "Use positive amount to add seeds, negative to spend them.",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["amount", "reason"],
+                properties: {
+                  amount: { type: "integer", example: 10 },
+                  reason: { type: "string", example: "daily_login" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "Seeds updated, returns updated progress" },
+          401: { description: "Unauthorized" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
+    "/gamification/progress/xp-logs": {
+      get: {
+        tags: ["Gamification"],
+        summary: "Get XP history",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: "List of XP logs ordered by created_at desc" },
+          401: { description: "Unauthorized" }
+        }
+      }
+    },
+    "/gamification/progress/seed-transactions": {
+      get: {
+        tags: ["Gamification"],
+        summary: "Get seed transaction history",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: "List of seed transactions ordered by created_at desc" },
+          401: { description: "Unauthorized" }
+        }
+      }
+    },
+    "/gamification/achievements": {
+      get: {
+        tags: ["Gamification"],
+        summary: "Get all achievements",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: "List of all achievements" },
+          401: { description: "Unauthorized" }
+        }
+      },
+      post: {
+        tags: ["Gamification"],
+        summary: "Create an achievement — admin only",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["name", "description", "condition_type", "condition_value", "xp_reward"],
+                properties: {
+                  name: { type: "string", example: "Primera Planta" },
+                  description: { type: "string", example: "Registra tu primera planta" },
+                  condition_type: { type: "string", example: "plant_count" },
+                  condition_value: { type: "integer", example: 1 },
+                  xp_reward: { type: "integer", example: 100 },
+                  icon_url: { type: "string", format: "uri" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: { description: "Achievement created" },
+          401: { description: "Unauthorized" },
+          403: { description: "Forbidden — admin only" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
+    "/gamification/achievements/me": {
+      get: {
+        tags: ["Gamification"],
+        summary: "Get achievements unlocked by the current user",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: "List of unlocked achievements with details" },
+          401: { description: "Unauthorized" }
+        }
+      }
+    },
+    "/gamification/achievements/{id}": {
+      patch: {
+        tags: ["Gamification"],
+        summary: "Update an achievement — admin only",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  description: { type: "string" },
+                  condition_type: { type: "string" },
+                  condition_value: { type: "integer" },
+                  xp_reward: { type: "integer" },
+                  icon_url: { type: "string", format: "uri" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "Achievement updated" },
+          401: { description: "Unauthorized" },
+          403: { description: "Forbidden — admin only" },
+          404: { description: "Achievement not found" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
+    "/gamification/achievements/{id}/unlock": {
+      post: {
+        tags: ["Gamification"],
+        summary: "Unlock an achievement for the current user",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          201: { description: "Achievement unlocked" },
+          401: { description: "Unauthorized" },
+          404: { description: "Achievement not found" },
+          409: { description: "Achievement already unlocked" }
+        }
+      }
     }
 
   },
