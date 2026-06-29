@@ -45,6 +45,10 @@ model User {
   sessions Session[]
   rooms Room[]
   user_plants UserPlant[]
+  progress          UserProgress?
+  xp_logs           XpLog[]
+  seed_transactions SeedTransaction[]
+  user_achievements UserAchievement[]
 }
 
 model Session {
@@ -174,4 +178,61 @@ model CareLog {
 
   user_plant UserPlant     @relation(fields: [user_plant_id], references: [id])
   task       UserPlantTask? @relation(fields: [task_id], references: [id])
+}
+
+model UserProgress {
+  user_id     String   @id
+  xp          Int      @default(0)
+  level       Int      @default(1)
+  streak_days Int      @default(0)
+  seeds       Int      @default(0)
+  updated_at  DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model XpLog {
+  id          String   @id @default(uuid())
+  user_id     String
+  action_type String
+  xp_earned   Int
+  created_at  DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model SeedTransaction {
+  id         String   @id @default(uuid())
+  user_id    String
+  amount     Int
+  reason     String
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Achievement {
+  id              String @id @default(uuid())
+  name            String @unique
+  description     String
+  condition_type  String
+  condition_value Int
+  xp_reward       Int
+  icon_url        String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  user_achievements UserAchievement[]
+}
+
+model UserAchievement {
+  id             String   @id @default(uuid())
+  user_id        String
+  achievement_id String
+  unlocked_at    DateTime @default(now())
+
+  user        User        @relation(fields: [user_id], references: [id])
+  achievement Achievement @relation(fields: [achievement_id], references: [id])
+
+  @@unique([user_id, achievement_id])
 }
