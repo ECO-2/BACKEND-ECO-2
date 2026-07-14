@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 
 beforeEach(async () => {
+  await prisma.plantIdentification.deleteMany()
   await prisma.userAchievement.deleteMany()
   await prisma.xpLog.deleteMany()
   await prisma.seedTransaction.deleteMany()
