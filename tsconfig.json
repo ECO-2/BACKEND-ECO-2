@@ -10,7 +10,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
-  "exclude": ["node_modules", "prisma.config.ts", "jest.config.js", "generated", "prisma/seed.ts", "src/__test__"]
+  "exclude": ["node_modules", "prisma.config.ts", "jest.config.js", "generated", "prisma/seed.ts"]
 }
