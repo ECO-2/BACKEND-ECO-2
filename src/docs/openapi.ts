@@ -884,6 +884,129 @@ export const openApiSpec = {
           409: { description: "Achievement already unlocked" }
         }
       }
+    },
+    "/identifications": {
+      post: {
+        tags: ["Identification"],
+        summary: "Register a plant identification result from on-device TFLite inference",
+        description: "Flutter runs the TFLite model locally and sends the result here. The backend matches it against the species catalog and logs the identification.",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["scientific_name", "confidence_score"],
+                properties: {
+                  scientific_name: {
+                    type: "string",
+                    example: "Monstera_deliciosa",
+                    description: "Label output by the TFLite model — underscores are normalized to spaces"
+                  },
+                  confidence_score: {
+                    type: "number",
+                    minimum: 0,
+                    maximum: 1,
+                    example: 0.91
+                  },
+                  image_url: {
+                    type: "string",
+                    format: "uri",
+                    description: "Optional — URL of the captured image if uploaded to storage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: "Identification registered",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    identification: { type: "object" },
+                    species: { type: "object", nullable: true },
+                    low_confidence: { type: "boolean" },
+                    suggest_fallback: { type: "boolean" }
+                  }
+                }
+              }
+            }
+          },
+          401: { description: "Unauthorized" },
+          422: { description: "Validation error" }
+        }
+      },
+      get: {
+        tags: ["Identification"],
+        summary: "Get identification history for the current user",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: "List of identifications ordered by created_at desc" },
+          401: { description: "Unauthorized" }
+        }
+      }
+    },
+    "/identifications/fallback": {
+      post: {
+        tags: ["Identification"],
+        summary: "Identify a plant using Plant.id API as fallback",
+        description: "⚠️ Uses external Plant.id API with a limited free quota (50 credits). Use sparingly — recommended only when on-device confidence is low or unavailable. Receives the raw image instead of a pre-computed result.",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["image_base64"],
+                properties: {
+                  image_base64: {
+                    type: "string",
+                    description: "Base64-encoded image data"
+                  },
+                  image_url: {
+                    type: "string",
+                    format: "uri"
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: "Identification attempted via Plant.id",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    identification: { type: "object" },
+                    species: { type: "object", nullable: true },
+                    low_confidence: { type: "boolean" },
+                    plant_id_suggestion: {
+                      type: "object",
+                      nullable: true,
+                      description: "Present when Plant.id identified a species not in your catalog",
+                      properties: {
+                        scientific_name: { type: "string" },
+                        common_name: { type: "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          401: { description: "Unauthorized" },
+          422: { description: "Validation error" }
+        }
+      }
     }
 
   },
