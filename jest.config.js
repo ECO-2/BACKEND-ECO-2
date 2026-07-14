@@ -10,5 +10,8 @@ module.exports = {
   },
   transformIgnorePatterns: [
     "node_modules/(?!@scalar)"
-  ]
+  ],
+  transform: {
+    "^.+\\.ts$": ["ts-jest", { tsconfig: "tsconfig.test.json" }]
+  }
 }
