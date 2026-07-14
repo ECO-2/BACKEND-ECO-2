@@ -8,7 +8,9 @@
     "build": "tsc && tsc-alias",
     "start": "node dist/server.js",
     "test": "cross-env NODE_ENV=test jest --runInBand",
-    "migrate:test": "cross-env DATABASE_URL_OVERRIDE=true prisma migrate deploy"
+    "migrate:test": "cross-env DATABASE_URL_OVERRIDE=true prisma migrate deploy",
+    "seed": "ts-node --project tsconfig.json -r tsconfig-paths/register prisma/seed.ts",
+    "seed:test": "cross-env DATABASE_URL=%DATABASE_URL_TEST% ts-node --project tsconfig.json -r tsconfig-paths/register prisma/seed.ts"
   },
   "repository": {
     "type": "git",
