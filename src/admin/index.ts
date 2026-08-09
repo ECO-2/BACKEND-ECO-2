@@ -1,4 +1,5 @@
 import type { Express } from "express"
+import path from "path"
 import { createPrismaResourceClass } from "./adapters/prisma-resource"
 import { userResourceConfig } from "./resources/user.resource"
 import { plantSpeciesResourceConfig } from "./resources/plant-species.resource"
@@ -35,11 +36,28 @@ const dynamicImport = new Function("specifier", "return import(specifier)") as <
  * (supertest) doesn't pay the cost of loading AdminJS at all.
  */
 export async function mountAdmin(app: Express): Promise<void> {
-  const { default: AdminJS, BaseResource, BaseProperty, BaseRecord } =
+  const { default: AdminJS, BaseResource, BaseProperty, BaseRecord, Router: AdminRouter } =
     await dynamicImport<typeof import("adminjs")>("adminjs")
   const { default: AdminJSExpress } = await dynamicImport<typeof import("@adminjs/express")>(
     "@adminjs/express",
   )
+
+  // @adminjs/express sirve estos bundles con `res.sendFile(asset.src)` sin
+  // `{ dotfiles: "allow" }`. `send` (la lib que usa Express por debajo)
+  // bloquea por defecto CUALQUIER archivo cuya ruta pase por una carpeta
+  // que empiece con "." (protección genérica anti-".env"/".git"), y eso
+  // incluye rutas de checkout perfectamente normales como
+  // C:\Users\<usuario>\...\.algo\... — no es un caso raro. Sin esto el
+  // login del panel queda en blanco ("createRoot is not defined") porque
+  // los bundles nunca llegan a cargar. Se registra ANTES del router de
+  // AdminJS para interceptar esas rutas primero.
+  for (const asset of AdminRouter.assets) {
+    app.get(`${ADMIN_ROOT_PATH}${asset.path}`, (_req, res) => {
+      res.sendFile(path.resolve(asset.src), { dotfiles: "allow" }, (err) => {
+        if (err) res.status(404).end()
+      })
+    })
+  }
 
   const PrismaResource = createPrismaResourceClass({ BaseResource, BaseProperty, BaseRecord })
 
