@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import type { PrismaResourceConfig } from "../adapters/prisma-resource.js"
+import type { PrismaResourceConfig } from "../adapters/prisma-resource"
 
 export const plantSpeciesResourceConfig: PrismaResourceConfig = {
   resourceId: "PlantSpecies",

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import type { PrismaResourceConfig } from "../adapters/prisma-resource.js"
+import type { PrismaResourceConfig } from "../adapters/prisma-resource"
 
 // password_hash / reset_token_hash / provider_id are intentionally excluded
 // from admin properties — there is no legitimate reason to display or edit

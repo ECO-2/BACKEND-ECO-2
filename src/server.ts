@@ -2,7 +2,7 @@ import "dotenv/config"
 import app from "./app"
 import { apiReference } from "@scalar/express-api-reference"
 import express from "express"
-import { mountAdmin } from "./admin/index.js"
+import { mountAdmin } from "./admin/index"
 
 const PORT = process.env.PORT || 3000
 
