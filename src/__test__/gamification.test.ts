@@ -458,5 +458,29 @@ describe("Gamification", () => {
 
       expect(res.status).toBe(404)
     })
+
+    it("should credit xp_reward and seed_reward to the user's progress", async () => {
+      const achievement = await prisma.achievement.create({
+        data: {
+          name: "Primera Planta",
+          description: "Test",
+          condition_type: "plant_count",
+          condition_value: 1,
+          xp_reward: 100,
+          seed_reward: 20
+        }
+      })
+
+      await request(app)
+        .post(`/gamification/achievements/${achievement.id}/unlock`)
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      const res = await request(app)
+        .get("/gamification/progress")
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      expect(res.body.xp).toBe(100)
+      expect(res.body.seeds).toBe(20)
+    })
   })
 })

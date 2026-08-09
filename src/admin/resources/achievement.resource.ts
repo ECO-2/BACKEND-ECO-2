@@ -11,6 +11,7 @@ export const achievementResourceConfig: PrismaResourceConfig = {
     { path: "condition_type", type: "string", isRequired: true },
     { path: "condition_value", type: "number", isRequired: true },
     { path: "xp_reward", type: "number", isRequired: true },
+    { path: "seed_reward", type: "number" },
     { path: "icon_url", type: "string" },
     { path: "created_at", type: "datetime", readOnly: true },
     { path: "updated_at", type: "datetime", readOnly: true },

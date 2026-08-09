@@ -225,6 +225,7 @@ model Achievement {
   condition_type  String
   condition_value Int
   xp_reward       Int
+  seed_reward     Int      @default(0)
   icon_url        String?
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
