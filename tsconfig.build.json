@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "prisma.config.ts", "jest.config.js", "generated", "prisma/seed.ts", "src/__test__"]
+}
