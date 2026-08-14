@@ -1,0 +1,39 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare deployment package
+        run: |
+          mkdir -p deploy_package
+          rsync -av --exclude='node_modules' \
+                    --exclude='.env' \
+                    --exclude='.env.*' \
+                    --exclude='.github' \
+                    --exclude='keys' \
+                    --exclude='jest.config.js' \
+                    --exclude='README.md' \
+                    --exclude='deploy_package' \
+                    --exclude='.git' \
+                    --exclude='dist' \
+                    ./ deploy_package/
+
+      - name: Zip package
+        run: cd deploy_package && zip -r ../deploy.zip . -x ".*"
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: eco2-api
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: deploy.zip
