@@ -16,6 +16,7 @@ const achievementSchema = z.object({
   condition_type: z.string().min(1),
   condition_value: z.number().int().min(0),
   xp_reward: z.number().int().min(0),
+  seed_reward: z.number().int().min(0).optional(),
   icon_url: z.string().url().optional()
 })
 
@@ -48,5 +49,10 @@ export const unlockAchievementUseCase = async (userId: string, achievementId: st
   const already = await findUserAchievement(userId, achievementId)
   if (already) throw new AppError("Achievement already unlocked", 409)
 
-  return unlockAchievement(userId, achievementId)
+  return unlockAchievement(userId, {
+    id: achievement.id,
+    name: achievement.name,
+    xp_reward: achievement.xp_reward,
+    seed_reward: achievement.seed_reward
+  })
 }

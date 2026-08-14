@@ -21,6 +21,7 @@ async function main() {
       condition_type: "onboarding_completed",
       condition_value: 1,
       xp_reward: 50,
+      seed_reward: 10,
     },
     {
       name: "Ojo Botánico",
@@ -28,6 +29,7 @@ async function main() {
       condition_type: "plant_scans",
       condition_value: 1,
       xp_reward: 100,
+      seed_reward: 15,
     },
     {
       name: "Mi Primer Espacio",
@@ -35,6 +37,7 @@ async function main() {
       condition_type: "rooms_created",
       condition_value: 1,
       xp_reward: 100,
+      seed_reward: 15,
     },
     {
       name: "Manos a la Obra",
@@ -42,6 +45,7 @@ async function main() {
       condition_type: "care_logs",
       condition_value: 1,
       xp_reward: 50,
+      seed_reward: 10,
     },
     {
       name: "Cuidador Constante",
@@ -49,6 +53,7 @@ async function main() {
       condition_type: "care_logs",
       condition_value: 10,
       xp_reward: 200,
+      seed_reward: 30,
     },
     {
       name: "Guardián Verde",
@@ -56,6 +61,7 @@ async function main() {
       condition_type: "care_logs",
       condition_value: 30,
       xp_reward: 500,
+      seed_reward: 75,
     },
     {
       name: "Maestro del Cuidado",
@@ -63,6 +69,7 @@ async function main() {
       condition_type: "care_logs",
       condition_value: 50,
       xp_reward: 1500,
+      seed_reward: 200,
     },
     {
       name: "Leyenda Botánica",
@@ -70,6 +77,7 @@ async function main() {
       condition_type: "care_logs",
       condition_value: 100,
       xp_reward: 3000,
+      seed_reward: 400,
     },
     {
       name: "Mi Pequeño Jardín",
@@ -77,6 +85,7 @@ async function main() {
       condition_type: "user_plants",
       condition_value: 3,
       xp_reward: 200,
+      seed_reward: 30,
     },
     {
       name: "Coleccionista",
@@ -84,6 +93,7 @@ async function main() {
       condition_type: "user_plants",
       condition_value: 5,
       xp_reward: 1000,
+      seed_reward: 150,
     },
   ]
 

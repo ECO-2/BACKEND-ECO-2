@@ -124,6 +124,11 @@ model PlantSpecies {
   air_purification_score Int    @default(0)
   min_temperature      Int
   max_temperature      Int
+  // Populated via the admin backoffice once a real photo is sourced/licensed
+  // for the species. Both are plain URLs (e.g. Firebase Storage / Azure Blob
+  // + CDN) — no binary image data is ever stored in the database.
+  image_url            String?
+  thumbnail_url         String?
   created_at           DateTime @default(now())
 
   user_plants UserPlant[]
@@ -220,6 +225,7 @@ model Achievement {
   condition_type  String
   condition_value Int
   xp_reward       Int
+  seed_reward     Int      @default(0)
   icon_url        String?
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt

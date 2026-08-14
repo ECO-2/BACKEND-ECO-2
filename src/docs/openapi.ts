@@ -814,6 +814,7 @@ export const openApiSpec = {
                   condition_type: { type: "string", example: "plant_count" },
                   condition_value: { type: "integer", example: 1 },
                   xp_reward: { type: "integer", example: 100 },
+                  seed_reward: { type: "integer", example: 15 },
                   icon_url: { type: "string", format: "uri" }
                 }
               }
@@ -856,6 +857,7 @@ export const openApiSpec = {
                   condition_type: { type: "string" },
                   condition_value: { type: "integer" },
                   xp_reward: { type: "integer" },
+                  seed_reward: { type: "integer" },
                   icon_url: { type: "string", format: "uri" }
                 }
               }
