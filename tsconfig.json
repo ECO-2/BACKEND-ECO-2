@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "target": "ES2022",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node", "jest"]
+  },
+  "exclude": ["node_modules", "prisma.config.ts", "jest.config.js", "generated", "prisma/seed.ts"]
+}

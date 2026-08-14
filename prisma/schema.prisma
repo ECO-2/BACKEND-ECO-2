@@ -1,0 +1,259 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum Gender {
+  male
+  female
+  other
+  prefer_not_to_say
+}
+
+model User {
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  username            String?   @unique
+  avatar_url          String?
+  password_hash       String?
+  provider            String    @default("local")
+  provider_id         String?
+  mfa_enabled         Boolean   @default(false)
+  plan_type           String    @default("free")
+  gender              Gender?
+  birth_day           DateTime?
+  role                String    @default("user")
+  reset_token_hash    String?
+  onboarding_completed Boolean  @default(false)
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+  deleted_at          DateTime?
+  notifications_enabled     Boolean   @default(true)
+  reminder_start_hour       Int       @default(8)  
+  reminder_end_hour         Int       @default(21)
+
+  sessions Session[]
+  rooms Room[]
+  user_plants UserPlant[]
+  progress          UserProgress?
+  xp_logs           XpLog[]
+  seed_transactions SeedTransaction[]
+  user_achievements UserAchievement[]
+  plant_identifications PlantIdentification[]
+}
+
+model Session {
+  id                 String    @id @default(uuid())
+  user_id            String
+  token_hash         String    @unique
+  expires_at         DateTime
+  revoked_at         DateTime?
+  created_at         DateTime  @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+enum LightLevel {
+  low
+  medium
+  high
+}
+
+model Room {
+  id         String     @id @default(uuid())
+  user_id    String
+  name       String
+  size_m2    Decimal?
+  light_level LightLevel?
+  created_at DateTime   @default(now())
+  deleted_at DateTime?
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+enum PlantCategory {
+  tropical
+  succulent
+  cactus
+  fern
+  flowering
+  herb
+  tree
+  other
+}
+
+enum LightRequirement {
+  low
+  medium
+  high
+  indirect
+}
+
+enum HumidityPreference {
+  low
+  medium
+  high
+}
+
+enum HealthStatus {
+  excellent
+  good
+  fair
+  poor
+  critical
+}
+
+model PlantSpecies {
+  id                   String   @id @default(uuid())
+  scientific_name      String   @unique
+  common_name          String
+  category             PlantCategory
+  light_requirement    LightRequirement
+  water_frequency_days Int
+  humidity_preference  HumidityPreference
+  air_purification_score Int    @default(0)
+  min_temperature      Int
+  max_temperature      Int
+  // Populated via the admin backoffice once a real photo is sourced/licensed
+  // for the species. Both are plain URLs (e.g. Firebase Storage / Azure Blob
+  // + CDN) — no binary image data is ever stored in the database.
+  image_url            String?
+  thumbnail_url         String?
+  created_at           DateTime @default(now())
+
+  user_plants UserPlant[]
+  identifications PlantIdentification[]
+}
+
+model UserPlant {
+  id            String       @id @default(uuid())
+  user_id       String
+  species_id    String
+  nickname      String?
+  health_status HealthStatus @default(good)
+  acquired_at   DateTime     @default(now())
+  last_watered_at DateTime?
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
+  deleted_at    DateTime?
+
+  user    User         @relation(fields: [user_id], references: [id])
+  species PlantSpecies @relation(fields: [species_id], references: [id])
+  tasks     UserPlantTask[]
+  care_logs CareLog[]
+}
+
+enum TaskType {
+  watering
+  fertilizing
+  pruning
+  repotting
+  misting
+  cleaning
+}
+
+model UserPlantTask {
+  id                String    @id @default(uuid())
+  user_plant_id     String
+  task_type         TaskType
+  next_due_at       DateTime
+  last_completed_at DateTime?
+  frequency_days    Int
+  created_at        DateTime  @default(now())
+
+  user_plant UserPlant  @relation(fields: [user_plant_id], references: [id])
+  care_logs  CareLog[]
+}
+
+model CareLog {
+  id            String    @id @default(uuid())
+  user_plant_id String
+  task_id       String?
+  task_type     TaskType
+  performed_at  DateTime  @default(now())
+  created_at    DateTime  @default(now())
+
+  user_plant UserPlant     @relation(fields: [user_plant_id], references: [id])
+  task       UserPlantTask? @relation(fields: [task_id], references: [id])
+}
+
+model UserProgress {
+  user_id     String   @id
+  xp          Int      @default(0)
+  level       Int      @default(1)
+  streak_days Int      @default(0)
+  seeds       Int      @default(0)
+  updated_at  DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model XpLog {
+  id          String   @id @default(uuid())
+  user_id     String
+  action_type String
+  xp_earned   Int
+  created_at  DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model SeedTransaction {
+  id         String   @id @default(uuid())
+  user_id    String
+  amount     Int
+  reason     String
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Achievement {
+  id              String @id @default(uuid())
+  name            String @unique
+  description     String
+  condition_type  String
+  condition_value Int
+  xp_reward       Int
+  seed_reward     Int      @default(0)
+  icon_url        String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  user_achievements UserAchievement[]
+}
+
+model UserAchievement {
+  id             String   @id @default(uuid())
+  user_id        String
+  achievement_id String
+  unlocked_at    DateTime @default(now())
+
+  user        User        @relation(fields: [user_id], references: [id])
+  achievement Achievement @relation(fields: [achievement_id], references: [id])
+
+  @@unique([user_id, achievement_id])
+}
+
+model PlantIdentification {
+  id                    String   @id @default(uuid())
+  user_id               String
+  image_url             String?
+  identified_species_id String?
+  confidence_score      Float
+  source                String   @default("tflite") // "tflite" | "plant_id_api"
+  created_at            DateTime @default(now())
+
+  user    User          @relation(fields: [user_id], references: [id])
+  species PlantSpecies? @relation(fields: [identified_species_id], references: [id])
+}
