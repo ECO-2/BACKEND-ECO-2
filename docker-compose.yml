@@ -1,16 +1,13 @@
 version: '3.8'
 services:
-  db:
-    image: postgres:15
-    container_name: eco2_pg
-    environment:
-      POSTGRES_USER: eco2
-      POSTGRES_PASSWORD: eco2password
-      POSTGRES_DB: eco2
+  api:
+    build: .
+    container_name: eco2_api
     ports:
-      - "5432:5432"
+      - "3000:3000"
+    env_file:
+      - .env
     volumes:
-      - pgdata:/var/lib/postgresql/data
-
-volumes:
-  pgdata:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "until npx prisma migrate deploy; do echo 'Esperando a que Neon despierte...'; sleep 3; done && npm run dev"
