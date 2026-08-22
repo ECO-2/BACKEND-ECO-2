@@ -358,4 +358,347 @@ describe("Care System", () => {
       expect(res.status).toBe(404)
     })
   })
+
+    describe("GET /care/tasks", () => {
+    it("should return empty array when no tasks", async () => {
+      const res = await request(app)
+        .get("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      expect(res.status).toBe(200)
+      expect(res.body).toEqual([])
+    })
+
+    it("should return all tasks across all plants for the user", async () => {
+      const species2 = await prisma.plantSpecies.create({
+        data: {
+          scientific_name: "Aloe vera",
+          common_name: "Sábila",
+          category: "succulent",
+          light_requirement: "high",
+          water_frequency_days: 14,
+          humidity_preference: "low",
+          air_purification_score: 7,
+          min_temperature: 10,
+          max_temperature: 40
+        }
+      })
+
+      const plant2 = await request(app)
+        .post("/plants")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ species_id: species2.id, nickname: "Mi Aloe" })
+
+      await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plant2.body.id,
+          task_type: "watering",
+          frequency_days: 14,
+          next_due_at: new Date().toISOString()
+        })
+
+      const res = await request(app)
+        .get("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      expect(res.status).toBe(200)
+      expect(res.body).toHaveLength(2)
+    })
+
+    it("should not return tasks from other users", async () => {
+      await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      await request(app)
+        .post("/auth/register")
+        .send({ email: "other@eco2.com", password: "secret123" })
+
+      const otherLogin = await request(app)
+        .post("/auth/login")
+        .send({ email: "other@eco2.com", password: "secret123" })
+
+      const res = await request(app)
+        .get("/care/tasks")
+        .set("Authorization", `Bearer ${otherLogin.body.accessToken}`)
+
+      expect(res.status).toBe(200)
+      expect(res.body).toEqual([])
+    })
+
+    it("should return 401 without authentication", async () => {
+      const res = await request(app).get("/care/tasks")
+      expect(res.status).toBe(401)
+    })
+  })
+
+  describe("PATCH /care/tasks/:taskId", () => {
+    it("should update frequency_days", async () => {
+      const task = await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      const res = await request(app)
+        .patch(`/care/tasks/${task.body.id}`)
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ frequency_days: 14 })
+
+      expect(res.status).toBe(200)
+      expect(res.body.frequency_days).toBe(14)
+    })
+
+    it("should update next_due_at", async () => {
+      const task = await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      const newDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+
+      const res = await request(app)
+        .patch(`/care/tasks/${task.body.id}`)
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ next_due_at: newDate })
+
+      expect(res.status).toBe(200)
+      expect(new Date(res.body.next_due_at).toISOString()).toBe(newDate)
+    })
+
+    it("should return 422 with no fields provided", async () => {
+      const task = await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      const res = await request(app)
+        .patch(`/care/tasks/${task.body.id}`)
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({})
+
+      expect(res.status).toBe(422)
+    })
+
+    it("should return 404 for task belonging to another user", async () => {
+      const task = await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      await request(app)
+        .post("/auth/register")
+        .send({ email: "other@eco2.com", password: "secret123" })
+
+      const otherLogin = await request(app)
+        .post("/auth/login")
+        .send({ email: "other@eco2.com", password: "secret123" })
+
+      const res = await request(app)
+        .patch(`/care/tasks/${task.body.id}`)
+        .set("Authorization", `Bearer ${otherLogin.body.accessToken}`)
+        .send({ frequency_days: 14 })
+
+      expect(res.status).toBe(404)
+    })
+
+    it("should return 404 for non-existent task", async () => {
+      const res = await request(app)
+        .patch("/care/tasks/00000000-0000-0000-0000-000000000000")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ frequency_days: 14 })
+
+      expect(res.status).toBe(404)
+    })
+
+    it("should return 401 without authentication", async () => {
+      const task = await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      const res = await request(app)
+        .patch(`/care/tasks/${task.body.id}`)
+        .send({ frequency_days: 14 })
+
+      expect(res.status).toBe(401)
+    })
+  })
+
+  describe("DELETE /care/tasks/:taskId", () => {
+    it("should delete a task successfully", async () => {
+      const task = await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      const res = await request(app)
+        .delete(`/care/tasks/${task.body.id}`)
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      expect(res.status).toBe(204)
+
+      const tasks = await request(app)
+        .get(`/care/plants/${plantId}/tasks`)
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      expect(tasks.body).toEqual([])
+    })
+
+    it("should return 404 for task belonging to another user", async () => {
+      const task = await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      await request(app)
+        .post("/auth/register")
+        .send({ email: "other@eco2.com", password: "secret123" })
+
+      const otherLogin = await request(app)
+        .post("/auth/login")
+        .send({ email: "other@eco2.com", password: "secret123" })
+
+      const res = await request(app)
+        .delete(`/care/tasks/${task.body.id}`)
+        .set("Authorization", `Bearer ${otherLogin.body.accessToken}`)
+
+      expect(res.status).toBe(404)
+    })
+
+    it("should return 404 for non-existent task", async () => {
+      const res = await request(app)
+        .delete("/care/tasks/00000000-0000-0000-0000-000000000000")
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      expect(res.status).toBe(404)
+    })
+
+    it("should return 401 without authentication", async () => {
+      const task = await request(app)
+        .post("/care/tasks")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          user_plant_id: plantId,
+          task_type: "watering",
+          frequency_days: 7,
+          next_due_at: new Date().toISOString()
+        })
+
+      const res = await request(app).delete(`/care/tasks/${task.body.id}`)
+      expect(res.status).toBe(401)
+    })
+  })
+
+  describe("DELETE /care/logs/:logId", () => {
+    it("should delete a care log successfully", async () => {
+      const log = await request(app)
+        .post("/care/logs")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ user_plant_id: plantId, task_type: "watering" })
+
+      const res = await request(app)
+        .delete(`/care/logs/${log.body.id}`)
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      expect(res.status).toBe(204)
+
+      const logs = await request(app)
+        .get(`/care/plants/${plantId}/logs`)
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      expect(logs.body).toEqual([])
+    })
+
+    it("should return 404 for log belonging to another user", async () => {
+      const log = await request(app)
+        .post("/care/logs")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ user_plant_id: plantId, task_type: "watering" })
+
+      await request(app)
+        .post("/auth/register")
+        .send({ email: "other@eco2.com", password: "secret123" })
+
+      const otherLogin = await request(app)
+        .post("/auth/login")
+        .send({ email: "other@eco2.com", password: "secret123" })
+
+      const res = await request(app)
+        .delete(`/care/logs/${log.body.id}`)
+        .set("Authorization", `Bearer ${otherLogin.body.accessToken}`)
+
+      expect(res.status).toBe(404)
+    })
+
+    it("should return 404 for non-existent log", async () => {
+      const res = await request(app)
+        .delete("/care/logs/00000000-0000-0000-0000-000000000000")
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      expect(res.status).toBe(404)
+    })
+
+    it("should return 401 without authentication", async () => {
+      const log = await request(app)
+        .post("/care/logs")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ user_plant_id: plantId, task_type: "watering" })
+
+      const res = await request(app).delete(`/care/logs/${log.body.id}`)
+      expect(res.status).toBe(401)
+    })
+  })
 })

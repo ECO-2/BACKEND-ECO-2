@@ -586,6 +586,16 @@ export const openApiSpec = {
           404: { description: "Plant not found" },
           422: { description: "Validation error" }
         }
+      },
+      get: {
+        tags: ["Care"],
+        summary: "Get all tasks across all plants for the current user",
+        description: "Ideal for a dashboard view — returns tasks for every plant owned by the user in a single call, instead of querying plant by plant.",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: "List of tasks ordered by next_due_at, includes plant info" },
+          401: { description: "Unauthorized" }
+        }
       }
     },
     "/care/plants/{plantId}/tasks": {
@@ -609,6 +619,45 @@ export const openApiSpec = {
         parameters: [{ name: "taskId", in: "path", required: true, schema: { type: "string" } }],
         responses: {
           200: { description: "Task completed, care log created" },
+          401: { description: "Unauthorized" },
+          404: { description: "Task not found" }
+        }
+      }
+    },
+    "/care/tasks/{taskId}": {
+      patch: {
+        tags: ["Care"],
+        summary: "Update a task's frequency or next due date",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "taskId", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  frequency_days: { type: "integer", minimum: 1 },
+                  next_due_at: { type: "string", format: "date-time" }
+                },
+                description: "At least one field must be provided"
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "Task updated" },
+          401: { description: "Unauthorized" },
+          404: { description: "Task not found" },
+          422: { description: "Validation error — no fields provided" }
+        }
+      },
+      delete: {
+        tags: ["Care"],
+        summary: "Delete a scheduled task",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "taskId", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          204: { description: "Task deleted" },
           401: { description: "Unauthorized" },
           404: { description: "Task not found" }
         }
@@ -640,6 +689,20 @@ export const openApiSpec = {
           401: { description: "Unauthorized" },
           404: { description: "Plant not found" },
           422: { description: "Validation error" }
+        }
+      }
+    },
+    "/care/logs/{logId}": {
+      delete: {
+        tags: ["Care"],
+        summary: "Delete a care log entry",
+        description: "Use to undo or remove a care log created by mistake.",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "logId", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          204: { description: "Care log deleted" },
+          401: { description: "Unauthorized" },
+          404: { description: "Care log not found" }
         }
       }
     },
