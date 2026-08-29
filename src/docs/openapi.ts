@@ -179,6 +179,58 @@ export const openApiSpec = {
         }
       }
     },
+    "/auth/forgot-password": {
+      post: {
+        tags: ["Auth"],
+        summary: "Request a password reset",
+        description: "Sends a reset token if the email exists. Always returns 200 to avoid leaking which emails are registered.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["email"],
+                properties: {
+                  email: { type: "string", format: "email", example: "user@example.com" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "Reset flow initiated (if the email exists)" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      post: {
+        tags: ["Auth"],
+        summary: "Reset password using a token",
+        description: "Token is single-use and expires 30 minutes after being issued.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["token", "new_password"],
+                properties: {
+                  token: { type: "string" },
+                  new_password: { type: "string", minLength: 6, example: "newSecurePass456" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "Password reset successfully" },
+          400: { description: "Invalid or expired token" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
     "/user/me": {
       get: {
         tags: ["User"],
@@ -206,6 +258,33 @@ export const openApiSpec = {
             }
           },
           401: { description: "Invalid or missing token" }
+        }
+      },
+      delete: {
+        tags: ["User"],
+        summary: "Delete the authenticated user's account and all related data",
+        description: "Permanently deletes the user, their sessions, plants, tasks, care logs, identifications, and gamification data. Requires the current password for local accounts (not required for Firebase/OAuth accounts).",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  password: {
+                    type: "string",
+                    description: "Required only for accounts with a local password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          204: { description: "Account deleted" },
+          401: { description: "Unauthorized or incorrect password" },
+          404: { description: "User not found" },
+          422: { description: "Password required for local accounts" }
         }
       }
     },
@@ -333,6 +412,34 @@ export const openApiSpec = {
           401: { description: "Missing or invalid token" },
           409: { description: "Username already taken" },
           422: { description: "Validation error or invalid hour range" }
+        }
+      }
+    },
+    "/user/password": {
+      patch: {
+        tags: ["User"],
+        summary: "Change the authenticated user's password",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["current_password", "new_password"],
+                properties: {
+                  current_password: { type: "string", example: "secret123" },
+                  new_password: { type: "string", minLength: 6, example: "newSecurePass456" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          204: { description: "Password updated" },
+          400: { description: "Account does not use a password (Firebase/OAuth)" },
+          401: { description: "Current password is incorrect" },
+          422: { description: "Validation error" }
         }
       }
     },
