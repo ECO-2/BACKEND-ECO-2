@@ -4,6 +4,7 @@ import { findUserById } from "@/infrastructure/repositories/user.repository"
 import { completeOnboardingController } from "@/interfaces/controllers/onboarding.controller"
 import { updateProfileController } from "@/interfaces/controllers/profile.controller"
 import { deleteMeController, updatePasswordController } from "@/interfaces/controllers/user.controller"
+import { registerDeviceTokenController } from "@/interfaces/controllers/user.controller"
 
 const router = Router()
 
@@ -32,5 +33,6 @@ router.patch("/onboarding", authenticate, completeOnboardingController)
 router.patch("/profile", authenticate, updateProfileController)
 router.delete("/me", authenticate, deleteMeController)
 router.patch("/password", authenticate, updatePasswordController)
+router.post("/device-token", authenticate, registerDeviceTokenController)
 
 export default router
