@@ -61,3 +61,37 @@ export const updateUserProfile = async (
     data
   })
 }
+
+export const updateUserPassword = async (userId: string, password_hash: string) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { password_hash }
+  })
+}
+
+export const setResetTokenHash = async (userId: string, hash: string | null) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { reset_token_hash: hash }
+  })
+}
+
+export const findUserByResetTokenHash = async (hash: string) => {
+  return prisma.user.findFirst({ where: { reset_token_hash: hash } })
+}
+
+export const deleteUserAndData = async (userId: string) => {
+  return prisma.$transaction(async (tx) => {
+    await tx.careLog.deleteMany({ where: { user_plant: { user_id: userId } } })
+    await tx.userPlantTask.deleteMany({ where: { user_plant: { user_id: userId } } })
+    await tx.userPlant.deleteMany({ where: { user_id: userId } })
+    await tx.plantIdentification.deleteMany({ where: { user_id: userId } })
+    await tx.userAchievement.deleteMany({ where: { user_id: userId } })
+    await tx.xpLog.deleteMany({ where: { user_id: userId } })
+    await tx.seedTransaction.deleteMany({ where: { user_id: userId } })
+    await tx.userProgress.deleteMany({ where: { user_id: userId } })
+    await tx.session.deleteMany({ where: { user_id: userId } })
+    await tx.room.deleteMany({ where: { user_id: userId } })
+    await tx.user.delete({ where: { id: userId } })
+  })
+}

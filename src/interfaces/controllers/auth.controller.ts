@@ -6,6 +6,8 @@ import { refreshToken } from "@/application/use-cases/refresh-token.usecase"
 import { logoutUser } from "@/application/use-cases/logout-user.usecase"
 import { NextFunction } from "express"
 import { firebaseLogin } from "@/application/use-cases/firebase-login.usecase"
+import { forgotPasswordUseCase } from "@/application/use-cases/forgot-password.usecase"
+import { resetPasswordUseCase } from "@/application/use-cases/reset-password.usecase"
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -55,6 +57,24 @@ export const firebaseLoginController = async (req: Request, res: Response, next:
   try {
     const tokens = await firebaseLogin(req.body)
     res.status(200).json(tokens)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const forgotPasswordController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await forgotPasswordUseCase(req.body)
+    res.status(200).json({ message: "If an account exists with that email, a reset link has been sent" })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const resetPasswordController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await resetPasswordUseCase(req.body)
+    res.status(200).json({ message: "Password reset successfully" })
   } catch (error) {
     next(error)
   }

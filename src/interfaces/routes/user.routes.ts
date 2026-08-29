@@ -3,6 +3,7 @@ import { authenticate } from "../middleware/authenticate"
 import { findUserById } from "@/infrastructure/repositories/user.repository"
 import { completeOnboardingController } from "@/interfaces/controllers/onboarding.controller"
 import { updateProfileController } from "@/interfaces/controllers/profile.controller"
+import { deleteMeController, updatePasswordController } from "@/interfaces/controllers/user.controller"
 
 const router = Router()
 
@@ -29,5 +30,7 @@ router.get("/me", authenticate, async (req, res, next) => {
 
 router.patch("/onboarding", authenticate, completeOnboardingController)
 router.patch("/profile", authenticate, updateProfileController)
+router.delete("/me", authenticate, deleteMeController)
+router.patch("/password", authenticate, updatePasswordController)
 
 export default router
