@@ -50,6 +50,7 @@ model User {
   seed_transactions SeedTransaction[]
   user_achievements UserAchievement[]
   plant_identifications PlantIdentification[]
+  device_tokens DeviceToken[]
 }
 
 model Session {
@@ -256,4 +257,13 @@ model PlantIdentification {
 
   user    User          @relation(fields: [user_id], references: [id])
   species PlantSpecies? @relation(fields: [identified_species_id], references: [id])
+}
+
+model DeviceToken {
+  id         String   @id @default(uuid())
+  user_id    String
+  token      String   @unique
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
 }
