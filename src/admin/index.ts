@@ -2,8 +2,18 @@ import type { Express } from "express"
 import path from "path"
 import { createPrismaResourceClass } from "./adapters/prisma-resource"
 import { userResourceConfig } from "./resources/user.resource"
+import { sessionResourceConfig } from "./resources/session.resource"
 import { plantSpeciesResourceConfig } from "./resources/plant-species.resource"
+import { roomResourceConfig } from "./resources/room.resource"
+import { userPlantResourceConfig } from "./resources/user-plant.resource"
+import { userPlantTaskResourceConfig } from "./resources/user-plant-task.resource"
+import { careLogResourceConfig } from "./resources/care-log.resource"
+import { plantIdentificationResourceConfig } from "./resources/plant-identification.resource"
 import { achievementResourceConfig } from "./resources/achievement.resource"
+import { userAchievementResourceConfig } from "./resources/user-achievement.resource"
+import { userProgressResourceConfig } from "./resources/user-progress.resource"
+import { xpLogResourceConfig } from "./resources/xp-log.resource"
+import { seedTransactionResourceConfig } from "./resources/seed-transaction.resource"
 import { authenticateAdmin } from "./auth"
 
 const ADMIN_ROOT_PATH = "/admin"
@@ -61,12 +71,29 @@ export async function mountAdmin(app: Express): Promise<void> {
 
   const PrismaResource = createPrismaResourceClass({ BaseResource, BaseProperty, BaseRecord })
 
+  const nav = (name: string) => ({ navigation: { name, icon: "Database" } })
+
   const admin = new AdminJS({
     rootPath: ADMIN_ROOT_PATH,
     resources: [
-      { resource: new PrismaResource(userResourceConfig) },
-      { resource: new PrismaResource(plantSpeciesResourceConfig) },
-      { resource: new PrismaResource(achievementResourceConfig) },
+      // Usuarios y cuentas
+      { resource: new PrismaResource(userResourceConfig), options: nav("Usuarios y cuentas") },
+      { resource: new PrismaResource(sessionResourceConfig), options: nav("Usuarios y cuentas") },
+
+      // Plantas y jardín
+      { resource: new PrismaResource(plantSpeciesResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(roomResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(userPlantResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(userPlantTaskResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(careLogResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(plantIdentificationResourceConfig), options: nav("Plantas y jardín") },
+
+      // Gamificación
+      { resource: new PrismaResource(achievementResourceConfig), options: nav("Gamificación") },
+      { resource: new PrismaResource(userAchievementResourceConfig), options: nav("Gamificación") },
+      { resource: new PrismaResource(userProgressResourceConfig), options: nav("Gamificación") },
+      { resource: new PrismaResource(xpLogResourceConfig), options: nav("Gamificación") },
+      { resource: new PrismaResource(seedTransactionResourceConfig), options: nav("Gamificación") },
     ],
     branding: {
       companyName: "ECO2 Backoffice",

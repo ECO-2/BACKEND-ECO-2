@@ -187,24 +187,35 @@ export function createPrismaResourceClass({ BaseResource, BaseProperty, BaseReco
       return new BaseRecord(params, this)
     }
 
-    private sanitize(params: Record<string, unknown>): Record<string, unknown> {
+    // Most models auto-generate their id (`@default(uuid())`), so the id
+    // field is always stripped before hitting Prisma. A few models (e.g.
+    // UserProgress, whose PK is the FK `user_id` with no default) need the
+    // id supplied on create but must never have it change on update — that
+    // split is what `isCreate` controls.
+    private sanitize(params: Record<string, unknown>, isCreate: boolean): Record<string, unknown> {
       const data: Record<string, unknown> = {}
       this.config.fields.forEach((field) => {
-        if (field.isId || field.readOnly) return
+        if (field.readOnly) return
+        if (field.isId && !isCreate) return
         if (!(field.path in params)) return
-        data[field.path] = coerceValue(params[field.path], field.type)
+        const value = coerceValue(params[field.path], field.type)
+        // A blank id on create means "let the DB default generate it" —
+        // sending an explicit `null` would override `@default(uuid())` and
+        // fail the NOT NULL constraint instead.
+        if (field.isId && value === null) return
+        data[field.path] = value
       })
       return data
     }
 
     async create(params: Record<string, unknown>) {
-      return this.config.model.create({ data: this.sanitize(params) })
+      return this.config.model.create({ data: this.sanitize(params, true) })
     }
 
     async update(id: string, params: Record<string, unknown>) {
       return this.config.model.update({
         where: { [this.idField()]: id },
-        data: this.sanitize(params),
+        data: this.sanitize(params, false),
       })
     }
 
