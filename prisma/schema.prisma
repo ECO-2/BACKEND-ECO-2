@@ -126,10 +126,14 @@ model PlantSpecies {
   min_temperature      Int
   max_temperature      Int
   // Populated via the admin backoffice once a real photo is sourced/licensed
-  // for the species. Both are plain URLs (e.g. Firebase Storage / Azure Blob
-  // + CDN) — no binary image data is ever stored in the database.
+  // for the species. image_url/thumbnail_url are plain public URLs served by
+  // this same backend from /public/species (express.static) — no third-party
+  // image host required. image_key is the filename @adminjs/upload writes
+  // the raw upload to before it's resized into the two public files above;
+  // it has no meaning outside the admin upload flow.
   image_url            String?
   thumbnail_url         String?
+  image_key            String?
   created_at           DateTime @default(now())
 
   user_plants UserPlant[]

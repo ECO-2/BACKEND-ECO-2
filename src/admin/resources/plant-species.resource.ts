@@ -30,11 +30,16 @@ export const plantSpeciesResourceConfig: PrismaResourceConfig = {
     { path: "air_purification_score", type: "number" },
     { path: "min_temperature", type: "number", isRequired: true },
     { path: "max_temperature", type: "number", isRequired: true },
-    // Populated by whoever sources/licenses the species photo. See
-    // ADMIN.md for the recommended upload flow (Firebase Storage / Azure
-    // Blob + CDN, WebP, thumbnail + full size).
+    // image_url/thumbnail_url are populated automatically by the "Foto"
+    // upload widget on this resource (see admin/index.ts — uploadFileFeature
+    // + resizeSpeciesPhoto) once a real photo is dropped in the edit form.
+    // They can still be set/edited by hand (e.g. to point at an
+    // already-hosted image) — the widget is a convenience, not the only way.
     { path: "image_url", type: "string" },
     { path: "thumbnail_url", type: "string" },
+    // Internal: filename the upload widget wrote the raw photo to under
+    // public/species/. Not meant to be edited by hand.
+    { path: "image_key", type: "string" },
     { path: "created_at", type: "datetime", isSortable: true, readOnly: true },
   ],
 }
