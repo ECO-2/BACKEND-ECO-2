@@ -20,6 +20,8 @@ export const getIdentificationsController = async (req: Request, res: Response, 
 export const identifyWithFallbackController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await identifyWithFallbackUseCase(req.user!.sub, req.body)
-    res.status(201).json(result)
+    // 201 solo cuando de verdad se creó un registro de identificación —
+    // si la IA todavía no está configurada, no se creó nada.
+    res.status(result.identification ? 201 : 200).json(result)
   } catch (error) { next(error) }
 }
