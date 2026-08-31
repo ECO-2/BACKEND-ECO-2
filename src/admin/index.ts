@@ -14,6 +14,7 @@ import { userAchievementResourceConfig } from "./resources/user-achievement.reso
 import { userProgressResourceConfig } from "./resources/user-progress.resource"
 import { xpLogResourceConfig } from "./resources/xp-log.resource"
 import { seedTransactionResourceConfig } from "./resources/seed-transaction.resource"
+import { deviceTokenResourceConfig } from "./resources/device-token.resource"
 import { authenticateAdmin } from "./auth"
 import { SPECIES_DIR, resizeSpeciesPhoto } from "./resize-species-photo"
 
@@ -100,6 +101,7 @@ export async function mountAdmin(app: Express): Promise<void> {
       // Usuarios y cuentas
       { resource: new PrismaResource(userResourceConfig), options: nav("Usuarios y cuentas") },
       { resource: new PrismaResource(sessionResourceConfig), options: nav("Usuarios y cuentas") },
+      { resource: new PrismaResource(deviceTokenResourceConfig), options: nav("Usuarios y cuentas") },
 
       // Plantas y jardín
       {
