@@ -38,8 +38,10 @@ export const identifyWithPlantId = async (imageBase64: string): Promise<PlantIdR
       "Api-Key": process.env.PLANT_ID_API_KEY!
     },
     body: JSON.stringify({
-      images: [imageBase64],
-      similar_images: false
+      images: [imageBase64]
+      // similar_images solo acepta el valor `true` como modifier — la API
+      // lo rechaza con 400 si se manda explícitamente en `false`. Se omite
+      // por completo; sin él, la API simplemente no incluye ese extra.
     })
   })
 
