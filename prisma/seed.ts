@@ -124,6 +124,7 @@ async function main() {
       air_purification_score: 8,
       min_temperature: 15,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009302/pothos_tv2khr.jpg",
     },
     {
       scientific_name: "Monstera deliciosa",
@@ -135,6 +136,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 18,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009311/monstera_costilla_de_adan_qbks58.jpg",
     },
     {
       scientific_name: "Monstera adansonii",
@@ -146,6 +148,7 @@ async function main() {
       air_purification_score: 6,
       min_temperature: 18,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009312/monstera_suizo_lfq09c.jpg",
     },
     {
       scientific_name: "Philodendron hederaceum",
@@ -157,6 +160,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 16,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009297/filodendro_corazon_qozwzv.jpg",
     },
     {
       scientific_name: "Philodendron bipinnatifidum",
@@ -168,6 +172,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 18,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009306/filodendro_arbol_ukffwz.jpg",
     },
     {
       scientific_name: "Spathiphyllum wallisii",
@@ -179,6 +184,7 @@ async function main() {
       air_purification_score: 9,
       min_temperature: 18,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009293/cuna_de_moises_l2pz1t.jpg",
     },
     {
       scientific_name: "Aglaonema commutatum",
@@ -190,6 +196,7 @@ async function main() {
       air_purification_score: 8,
       min_temperature: 16,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009287/Aglaonema_q2utbx.jpg",
     },
     {
       scientific_name: "Dieffenbachia seguine",
@@ -201,6 +208,7 @@ async function main() {
       air_purification_score: 6,
       min_temperature: 18,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009294/diefenbaquia_pismyc.jpg",
     },
     {
       scientific_name: "Anthurium andraeanum",
@@ -212,6 +220,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 18,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009288/anthurium_andraeanum_czy0ui.jpg",
     },
     {
       scientific_name: "Calathea ornata",
@@ -223,6 +232,7 @@ async function main() {
       air_purification_score: 5,
       min_temperature: 18,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009291/calatea_ornata_qjuipm.jpg",
     },
     {
       scientific_name: "Calathea medallion",
@@ -234,6 +244,7 @@ async function main() {
       air_purification_score: 5,
       min_temperature: 18,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009290/calatea_de_medallon_ufcgf1.jpg",
     },
     {
       scientific_name: "Maranta leuconeura",
@@ -245,6 +256,7 @@ async function main() {
       air_purification_score: 5,
       min_temperature: 16,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009311/maranta_lujnmj.jpg",
     },
     {
       scientific_name: "Tradescantia zebrina",
@@ -256,6 +268,7 @@ async function main() {
       air_purification_score: 4,
       min_temperature: 10,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009304/trasdencantia_sbimmr.jpg",
     },
     {
       scientific_name: "Ficus elastica",
@@ -267,6 +280,7 @@ async function main() {
       air_purification_score: 8,
       min_temperature: 16,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009296/ficus_elastica_m8iuqm.jpg",
     },
     {
       scientific_name: "Ficus lyrata",
@@ -278,6 +292,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 16,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009297/ficus_lyrata_nx7o4m.jpg",
     },
     {
       scientific_name: "Dracaena trifasciata",
@@ -289,6 +304,7 @@ async function main() {
       air_purification_score: 9,
       min_temperature: 10,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009305/sanseveria_hcllf1.jpg",
     },
     {
       scientific_name: "Dracaena marginata",
@@ -300,6 +316,7 @@ async function main() {
       air_purification_score: 8,
       min_temperature: 15,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009295/dracena_marginata_aoappz.jpg",
     },
     {
       scientific_name: "Dracaena fragrans",
@@ -311,6 +328,7 @@ async function main() {
       air_purification_score: 8,
       min_temperature: 15,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009294/dracena_fragrans_wpjgov.jpg",
     },
     {
       scientific_name: "Zamioculcas zamiifolia",
@@ -322,6 +340,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 15,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009286/zz_plant_pfranr.jpg",
     },
     {
       scientific_name: "Chlorophytum comosum",
@@ -333,6 +352,7 @@ async function main() {
       air_purification_score: 9,
       min_temperature: 10,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009298/malamadre_qfw59y.jpg",
     },
     {
       scientific_name: "Hedera helix",
@@ -344,6 +364,7 @@ async function main() {
       air_purification_score: 8,
       min_temperature: 5,
       max_temperature: 28,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009309/hiedra_ktyhlm.jpg",
     },
     {
       scientific_name: "Schefflera actinophylla",
@@ -355,6 +376,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 15,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009300/paraguitas_zimygd.jpg",
     },
     {
       scientific_name: "Syngonium podophyllum",
@@ -366,6 +388,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 16,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009303/singonio_dj7tab.jpg",
     },
     {
       scientific_name: "Croton variegatum",
@@ -377,6 +400,7 @@ async function main() {
       air_purification_score: 5,
       min_temperature: 18,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009293/croton_qdqg5e.jpg",
     },
     {
       scientific_name: "Colocasia esculenta",
@@ -388,6 +412,7 @@ async function main() {
       air_purification_score: 4,
       min_temperature: 18,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009292/colocasia_gozywg.jpg",
     },
     // SUCULENTAS
     {
@@ -400,6 +425,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 10,
       max_temperature: 40,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009303/sabila_wd6rut.jpg",
     },
     {
       scientific_name: "Haworthiopsis attenuata",
@@ -411,6 +437,7 @@ async function main() {
       air_purification_score: 3,
       min_temperature: 10,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009308/haworthia_iiiuxk.jpg",
     },
     {
       scientific_name: "Echeveria elegans",
@@ -422,6 +449,7 @@ async function main() {
       air_purification_score: 2,
       min_temperature: 8,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009295/echeveria_lv9lx2.jpg",
     },
     {
       scientific_name: "Sedum morganianum",
@@ -433,6 +461,7 @@ async function main() {
       air_purification_score: 2,
       min_temperature: 10,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009292/cola_de_burro_jnxdeo.jpg",
     },
     {
       scientific_name: "Crassula ovata",
@@ -444,6 +473,7 @@ async function main() {
       air_purification_score: 4,
       min_temperature: 10,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009289/arbol_de_jade_ituwny.jpg",
     },
     // CACTUS
     {
@@ -456,6 +486,7 @@ async function main() {
       air_purification_score: 2,
       min_temperature: 10,
       max_temperature: 40,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009291/cereus_repandus_emxi7l.jpg",
     },
     {
       scientific_name: "Opuntia microdasys",
@@ -467,6 +498,7 @@ async function main() {
       air_purification_score: 2,
       min_temperature: 5,
       max_temperature: 40,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009314/nopal_r8q3d2.jpg",
     },
     {
       scientific_name: "Schlumbergera truncata",
@@ -478,6 +510,7 @@ async function main() {
       air_purification_score: 3,
       min_temperature: 10,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009290/cactus_de_navidad_qxogg7.jpg",
     },
     // HELECHOS
     {
@@ -490,6 +523,7 @@ async function main() {
       air_purification_score: 9,
       min_temperature: 15,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009307/helecho_de_boston_vsweqt.jpg",
     },
     {
       scientific_name: "Asplenium nidus",
@@ -501,6 +535,7 @@ async function main() {
       air_purification_score: 7,
       min_temperature: 18,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009308/helecho_nido_de_pajaro_qwfmg0.jpg",
     },
     // PLANTAS CON FLORES
     {
@@ -513,6 +548,7 @@ async function main() {
       air_purification_score: 4,
       min_temperature: 18,
       max_temperature: 38,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009287/Amapola_c6gltq.jpg",
     },
     {
       scientific_name: "Gardenia jasminoides",
@@ -524,6 +560,7 @@ async function main() {
       air_purification_score: 5,
       min_temperature: 16,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009307/gardenia_gcj23w.jpg",
     },
     {
       scientific_name: "Impatiens walleriana",
@@ -535,6 +572,7 @@ async function main() {
       air_purification_score: 3,
       min_temperature: 15,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009310/miarmelinda_seulvk.jpg",
     },
     {
       scientific_name: "Plumeria rubra",
@@ -546,6 +584,7 @@ async function main() {
       air_purification_score: 3,
       min_temperature: 18,
       max_temperature: 38,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009305/trinitaria_fk6shu.jpg",
     },
     // HIERBAS
     {
@@ -558,6 +597,7 @@ async function main() {
       air_purification_score: 3,
       min_temperature: 15,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009287/albahaca_jkh7cr.jpg",
     },
     {
       scientific_name: "Mentha spicata",
@@ -569,6 +609,7 @@ async function main() {
       air_purification_score: 3,
       min_temperature: 10,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009305/yerba_buena_tvra39.jpg",
     },
     {
       scientific_name: "Rosmarinus officinalis",
@@ -580,6 +621,7 @@ async function main() {
       air_purification_score: 4,
       min_temperature: 5,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009302/romero_czdq1e.jpg",
     },
     {
       scientific_name: "Aloe barbadensis",
@@ -591,6 +633,7 @@ async function main() {
       air_purification_score: 6,
       min_temperature: 10,
       max_temperature: 40,
+      // Sin image_url — no vino en el export manual; falta cargarla.
     },
     // ÁRBOLES DE INTERIOR
     {
@@ -603,6 +646,7 @@ async function main() {
       air_purification_score: 6,
       min_temperature: 16,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009288/arbol_del_dinero_tljrbw.jpg",
     },
     {
       scientific_name: "Beaucarnea recurvata",
@@ -614,6 +658,7 @@ async function main() {
       air_purification_score: 4,
       min_temperature: 10,
       max_temperature: 38,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009301/pata_de_elefante_bz8sne.jpg",
     },
     {
       scientific_name: "Chrysalidocarpus lutescens",
@@ -625,6 +670,7 @@ async function main() {
       air_purification_score: 9,
       min_temperature: 16,
       max_temperature: 35,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009313/palma_areca_ta0bt8.jpg",
     },
     {
       scientific_name: "Howea forsteriana",
@@ -636,6 +682,7 @@ async function main() {
       air_purification_score: 8,
       min_temperature: 12,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009300/palma_kentia_iikgkk.jpg",
     },
     {
       scientific_name: "Rhapis excelsa",
@@ -647,6 +694,7 @@ async function main() {
       air_purification_score: 8,
       min_temperature: 10,
       max_temperature: 32,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009299/palma_dama_pefwvr.jpg",
     },
     // OTRAS
     {
@@ -659,6 +707,7 @@ async function main() {
       air_purification_score: 5,
       min_temperature: 18,
       max_temperature: 38,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009289/bromelia_fastuosa_lcvqwt.jpg",
     },
     {
       scientific_name: "Peperomia obtusifolia",
@@ -670,6 +719,7 @@ async function main() {
       air_purification_score: 5,
       min_temperature: 15,
       max_temperature: 30,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009302/peperomia_lerb0p.jpg",
     },
     {
       scientific_name: "Oxalis triangularis",
@@ -681,6 +731,7 @@ async function main() {
       air_purification_score: 3,
       min_temperature: 10,
       max_temperature: 28,
+      image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009304/trebol_morado_ddxebh.jpg",
     },
   ]
 

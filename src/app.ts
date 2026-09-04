@@ -13,10 +13,6 @@ import internalRoutes from "@/interfaces/routes/internal.routes"
 
 const app = express()
 
-// Log simple de cada petición (método, ruta, status, duración) — sin esto
-// la consola de `npm run dev` se queda en silencio salvo que algo truene,
-// lo que hace muy difícil ver en vivo qué está pidiendo la app mientras la
-// usas. Se omite en tests para no ensuciar la salida de Jest.
 if (process.env.NODE_ENV !== "test") {
   app.use((req, res, next) => {
     const startedAt = Date.now()
@@ -27,10 +23,6 @@ if (process.env.NODE_ENV !== "test") {
   })
 }
 
-// El límite por defecto de express.json() es 100kb — una foto real de la
-// cámara codificada en base64 (para /identifications/fallback) pesa varios
-// MB, así que con el default cualquier escaneo fallaba con
-// "PayloadTooLargeError" antes de siquiera llegar al controlador.
 app.use(express.json({ limit: "12mb" }))
 
 app.use("/auth", authRoutes)
