@@ -13,6 +13,15 @@ export const runRemindersUseCase = async () => {
     }
   })
 
+  const taskTypeLabels: Record<string, string> = {
+    watering: "regar",
+    fertilizing: "fertilizar",
+    pruning: "podar",
+    repotting: "trasplantar",
+    misting: "nebulizar",
+    cleaning: "limpiar"
+  }
+
   let sent = 0
 
   for (const task of overdueTasks) {
@@ -24,9 +33,12 @@ export const runRemindersUseCase = async () => {
 
     if (!withinReminderWindow) continue
 
+    const plantName = task.user_plant.nickname ?? "tu planta"
+    const action = taskTypeLabels[task.task_type] ?? task.task_type
+
     const wasSent = await notifyUser(user.id, {
       title: "Tu planta te necesita 🌱",
-      body: `Es hora de ${task.task_type} tu planta.`
+      body: `Es hora de ${action} ${plantName}.`
     })
 
     if (wasSent) sent++
