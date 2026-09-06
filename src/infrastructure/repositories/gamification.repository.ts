@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { levelForXp } from "@/domain/gamification/levels"
 
 // USER PROGRESS
 export const findUserProgress = async (userId: string) => {
@@ -28,6 +29,17 @@ export const addXp = async (userId: string, amount: number, actionType: string) 
   await prisma.xpLog.create({
     data: { user_id: userId, action_type: actionType, xp_earned: amount }
   })
+
+  // El nivel se deriva del XP acumulado. Sin esto el campo `level` se quedaba
+  // en 1 para siempre por muchos cuidados que registrara el usuario, y el XP
+  // no llevaba a ninguna parte.
+  const newLevel = levelForXp(progress.xp).level
+  if (newLevel !== progress.level) {
+    return prisma.userProgress.update({
+      where: { user_id: userId },
+      data: { level: newLevel }
+    })
+  }
 
   return progress
 }

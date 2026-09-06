@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { AppError } from "@/core/errors/AppError"
+import { levelProgress } from "@/domain/gamification/levels"
 import {
   findUserProgress,
   upsertUserProgress,
@@ -28,8 +29,25 @@ const updateProgressSchema = z.object({
 
 export const getProgressUseCase = async (userId: string) => {
   const progress = await findUserProgress(userId)
-  if (!progress) return { user_id: userId, xp: 0, level: 1, streak_days: 0, seeds: 0 }
-  return progress
+
+  // Se devuelve el nivel derivado del XP junto al progreso hacia el siguiente,
+  // para que la app no tenga que duplicar la curva de niveles ni recurrir a
+  // textos fijos como el "Nivel 2 · Brote" que estaba escrito a mano.
+  const base = progress ?? { user_id: userId, xp: 0, level: 1, streak_days: 0, seeds: 0 }
+  const derived = levelProgress(base.xp)
+
+  return {
+    ...base,
+    // El nivel autoritativo es el derivado del XP: si una fila quedó con un
+    // `level` desincronizado (p. ej. editada a mano antes de existir esta
+    // curva), manda el XP.
+    level: derived.level,
+    level_name: derived.name,
+    xp_into_level: derived.xp_into_level,
+    xp_for_next: derived.xp_for_next,
+    next_level_name: derived.next_level_name,
+    level_progress: Number(derived.progress.toFixed(4))
+  }
 }
 
 export const addXpUseCase = async (userId: string, input: unknown) => {
