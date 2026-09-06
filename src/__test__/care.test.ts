@@ -39,6 +39,44 @@ describe("Care System", () => {
     plantId = plant.body.id
   })
 
+  // Sin estas dos garantías los recordatorios de riego nunca se disparan:
+  // runRemindersUseCase solo mira UserPlantTask, así que una planta sin tarea
+  // es invisible para las notificaciones, y una tarea que no se reprograma al
+  // regar seguiría avisando para siempre.
+  describe("recordatorios de riego automáticos", () => {
+    it("crea la tarea de riego al añadir la planta, con la frecuencia de la especie", async () => {
+      const res = await request(app)
+        .get(`/care/plants/${plantId}/tasks`)
+        .set("Authorization", `Bearer ${accessToken}`)
+
+      const watering = res.body.find((t: { task_type: string }) => t.task_type === "watering")
+      expect(watering).toBeDefined()
+      expect(watering.frequency_days).toBe(7)
+      expect(new Date(watering.next_due_at).getTime()).toBeGreaterThan(Date.now())
+    })
+
+    it("reprograma la tarea al registrar un riego desde la app", async () => {
+      const before = await request(app)
+        .get(`/care/plants/${plantId}/tasks`)
+        .set("Authorization", `Bearer ${accessToken}`)
+      const taskBefore = before.body.find((t: { task_type: string }) => t.task_type === "watering")
+
+      await request(app)
+        .post("/care/logs")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ user_plant_id: plantId, task_type: "watering" })
+
+      const after = await request(app)
+        .get(`/care/plants/${plantId}/tasks`)
+        .set("Authorization", `Bearer ${accessToken}`)
+      const taskAfter = after.body.find((t: { id: string }) => t.id === taskBefore.id)
+
+      expect(taskAfter.last_completed_at).not.toBeNull()
+      expect(new Date(taskAfter.next_due_at).getTime())
+        .toBeGreaterThan(new Date(taskBefore.next_due_at).getTime())
+    })
+  })
+
   // TASKS
   describe("POST /care/tasks", () => {
     it("should create a task successfully", async () => {
@@ -105,13 +143,16 @@ describe("Care System", () => {
   })
 
   describe("GET /care/plants/:plantId/tasks", () => {
-    it("should return empty array when no tasks", async () => {
+    it("should return only the auto-created watering task when none were added manually", async () => {
       const res = await request(app)
         .get(`/care/plants/${plantId}/tasks`)
         .set("Authorization", `Bearer ${accessToken}`)
 
       expect(res.status).toBe(200)
-      expect(res.body).toEqual([])
+      // Crear una planta genera automáticamente su tarea de riego, así que
+      // nunca vuelve vacío: sin eso la planta no dispararía recordatorios.
+      expect(res.body).toHaveLength(1)
+      expect(res.body[0].task_type).toBe("watering")
     })
 
     it("should return tasks for a plant", async () => {
@@ -140,7 +181,8 @@ describe("Care System", () => {
         .set("Authorization", `Bearer ${accessToken}`)
 
       expect(res.status).toBe(200)
-      expect(res.body).toHaveLength(2)
+      // 2 creadas aquí + la tarea de riego automática de la planta.
+      expect(res.body).toHaveLength(3)
     })
 
     it("should return 404 for plant belonging to another user", async () => {
@@ -360,13 +402,15 @@ describe("Care System", () => {
   })
 
     describe("GET /care/tasks", () => {
-    it("should return empty array when no tasks", async () => {
+    it("should return only the auto-created watering task when none were added manually", async () => {
       const res = await request(app)
         .get("/care/tasks")
         .set("Authorization", `Bearer ${accessToken}`)
 
       expect(res.status).toBe(200)
-      expect(res.body).toEqual([])
+      // La planta del setup trae su tarea de riego automática.
+      expect(res.body).toHaveLength(1)
+      expect(res.body[0].task_type).toBe("watering")
     })
 
     it("should return all tasks across all plants for the user", async () => {
@@ -414,7 +458,8 @@ describe("Care System", () => {
         .set("Authorization", `Bearer ${accessToken}`)
 
       expect(res.status).toBe(200)
-      expect(res.body).toHaveLength(2)
+      // 2 creadas aquí + las tareas de riego automáticas de las 2 plantas.
+      expect(res.body).toHaveLength(4)
     })
 
     it("should not return tasks from other users", async () => {
@@ -589,7 +634,8 @@ describe("Care System", () => {
         .get(`/care/plants/${plantId}/tasks`)
         .set("Authorization", `Bearer ${accessToken}`)
 
-      expect(tasks.body).toEqual([])
+      // Solo debe desaparecer la tarea borrada; la de riego automática sigue.
+      expect(tasks.body.map((t: { id: string }) => t.id)).not.toContain(task.body.id)
     })
 
     it("should return 404 for task belonging to another user", async () => {

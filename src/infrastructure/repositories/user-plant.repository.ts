@@ -5,6 +5,7 @@ export const createUserPlant = async (userId: string, data: {
   nickname?: string
   health_status?: "excellent" | "good" | "fair" | "poor" | "critical"
   acquired_at?: Date
+  last_watered_at?: Date
 }) => {
   return prisma.userPlant.create({
     data: {
@@ -12,7 +13,8 @@ export const createUserPlant = async (userId: string, data: {
       species_id: data.species_id,
       nickname: data.nickname,
       health_status: data.health_status ?? "good",
-      acquired_at: data.acquired_at ?? new Date()
+      acquired_at: data.acquired_at ?? new Date(),
+      last_watered_at: data.last_watered_at
     },
     include: { species: true }
   })
