@@ -5,6 +5,7 @@ import { completeOnboardingController } from "@/interfaces/controllers/onboardin
 import { updateProfileController } from "@/interfaces/controllers/profile.controller"
 import { deleteMeController, updatePasswordController } from "@/interfaces/controllers/user.controller"
 import { registerDeviceTokenController } from "@/interfaces/controllers/user.controller"
+import { getGreenFootprintController } from "@/interfaces/controllers/green-footprint.controller"
 
 const router = Router()
 
@@ -34,5 +35,7 @@ router.patch("/profile", authenticate, updateProfileController)
 router.delete("/me", authenticate, deleteMeController)
 router.patch("/password", authenticate, updatePasswordController)
 router.post("/device-token", authenticate, registerDeviceTokenController)
+// CO2 real del jardín del usuario, para "Mi Huella Verde".
+router.get("/green-footprint", authenticate, getGreenFootprintController)
 
 export default router

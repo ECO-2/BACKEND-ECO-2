@@ -125,6 +125,35 @@ model PlantSpecies {
   air_purification_score Int    @default(0)
   min_temperature      Int
   max_temperature      Int
+  // Gramos de CO2 que fija al día un ejemplar adulto de esta especie en
+  // interior. Es el dato que alimenta "Mi Huella Verde".
+  //
+  // Mientras esté vacío, el backend cae en una estimación derivada de
+  // air_purification_score y la marca como estimada, en vez de presentar un
+  // número inventado como si fuera medido. Debe rellenarse con criterio
+  // agronómico por especie: depende sobre todo del área foliar y de la luz
+  // que recibe la planta, no del "score" de purificación.
+  //
+  // Condición de referencia de los valores cargados: ejemplar adulto
+  // aclimatado, maceta de 10 cm, interior, 20 µmol·m⁻²·s⁻¹ PPFD, fotoperiodo
+  // de 12 h, 21 °C día / 18 °C noche. Valor NETO a 24 h (ya descuenta la
+  // respiración nocturna).
+  co2_absorption_g_day Decimal?
+  // Qué respalda el número: `medido`, `medido_cualitativo`, `proxy_genero`,
+  // `proxy_familia`, `grupo_funcional`, `cam_bajo_pcl`, `c3_bajo_pcl`.
+  //
+  // Es imprescindible guardarlo junto al valor: de las 51 especies del
+  // catálogo solo 9 son mediciones publicadas; el resto son derivaciones de
+  // distinto fundamento. Sin este campo las 51 filas serían indistinguibles y
+  // la app presentaría una inferencia con la misma autoridad que un dato.
+  co2_evidence_level   String?
+  // Rango publicado del valor, cuando existe. Permite comunicar incertidumbre
+  // en vez de un número seco.
+  co2_range_min        Decimal?
+  co2_range_max        Decimal?
+  // C3 o CAM. Las CAM fijan CO2 de noche y por debajo del punto de
+  // compensación lumínica de un interior no fijan nada neto.
+  metabolism           String?
   // Populated via the admin backoffice once a real photo is sourced/licensed
   // for the species. image_url/thumbnail_url are plain public URLs served by
   // this same backend from /public/species (express.static) — no third-party
