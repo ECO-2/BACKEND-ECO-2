@@ -1,0 +1,52 @@
+# Dispara los recordatorios de riego.
+#
+# El endpoint POST /internal/run-reminders ya existe y funciona, pero nada lo
+# llamaba: está pensado para que lo invoque un programador externo. Sin esto,
+# las tareas de riego se acumulan vencidas y el usuario nunca recibe la
+# notificación aunque la app le marque "¡Riego!" en la tarjeta de la planta.
+#
+# El caso de uso filtra por la ventana horaria de cada usuario
+# (reminder_start_hour / reminder_end_hour, por defecto 8–21 hora del
+# servidor), así que ejecutarlo cada hora es suficiente: a cada usuario le
+# llegará el aviso dentro de su franja y no fuera de ella.
+#
+# ANTES DE ACTIVARLO hacen falta dos secretos en el repositorio
+# (Settings → Secrets and variables → Actions):
+#   API_BASE_URL     p. ej. https://eco2-api-c9e4hfh7h3cfesg3.eastus-01.azurewebsites.net
+#   INTERNAL_API_KEY el mismo valor que tiene la variable INTERNAL_API_KEY en
+#                    la configuración de Azure App Service
+name: Recordatorios de riego
+
+on:
+  schedule:
+    # Cada hora en punto (UTC). GitHub Actions no garantiza el minuto exacto:
+    # bajo carga puede retrasarse algunos minutos, lo cual es irrelevante para
+    # un recordatorio de riego.
+    - cron: "0 * * * *"
+  # Permite lanzarlo a mano desde la pestaña Actions para probarlo.
+  workflow_dispatch:
+
+jobs:
+  run-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar a /internal/run-reminders
+        run: |
+          echo "Disparando recordatorios..."
+          # -sS: silencioso pero mostrando errores. Guardamos cuerpo y código
+          # por separado para poder fallar el job si no es 2xx.
+          HTTP_CODE=$(curl -sS -o response.json -w "%{http_code}" \
+            -X POST "${{ secrets.API_BASE_URL }}/internal/run-reminders" \
+            -H "x-internal-key: ${{ secrets.INTERNAL_API_KEY }}" \
+            --max-time 120)
+
+          echo "HTTP $HTTP_CODE"
+          echo "Respuesta: $(cat response.json)"
+
+          # Un 2xx devuelve {"checked":N,"sent":M}. Cualquier otra cosa
+          # (401 por clave mal configurada, 5xx, timeout) debe romper el job
+          # para que se vea en Actions en vez de fallar en silencio.
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            echo "::error::El job de recordatorios falló con HTTP $HTTP_CODE"
+            exit 1
+          fi
