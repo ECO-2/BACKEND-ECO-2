@@ -7,6 +7,8 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  # Para relanzar la suite sin tener que inventarse un commit.
+  workflow_dispatch:
 
 concurrency:
   group: tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
