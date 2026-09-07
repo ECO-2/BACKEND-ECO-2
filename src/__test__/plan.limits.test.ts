@@ -70,7 +70,7 @@ describe("Límites del plan gratuito y O2+", () => {
       const extra = await addPlant()
       expect(extra.status).toBe(403)
       expect(extra.body.error).toBe("plant_limit_reached")
-    })
+    }, 45000)
 
     it("no cuenta las plantas eliminadas contra el tope", async () => {
       const first = await addPlant()
@@ -83,7 +83,7 @@ describe("Límites del plan gratuito y O2+", () => {
 
       const again = await addPlant()
       expect(again.status).toBe(201)
-    })
+    }, 45000)
   })
 
   describe("Tope de escaneos diarios", () => {
@@ -113,13 +113,20 @@ describe("Límites del plan gratuito y O2+", () => {
       // El cobro es simulado y el endpoint lo dice explícitamente.
       expect(activate.body.simulated).toBe(true)
 
-      for (let i = 0; i < FREE_MAX_PLANTS + 2; i++) {
+      // Basta con pasarse del tope por uno para demostrar que ya no aplica;
+      // hacerlo por dos multiplica las peticiones contra una base remota sin
+      // aportar cobertura.
+      for (let i = 0; i < FREE_MAX_PLANTS + 1; i++) {
         expect((await addPlant()).status).toBe(201)
       }
-      for (let i = 0; i < FREE_DAILY_SCANS + 2; i++) {
+      for (let i = 0; i < FREE_DAILY_SCANS + 1; i++) {
         expect((await scan()).status).toBe(201)
       }
-    })
+      // Timeout propio: son ~17 peticiones seguidas contra Neon y los 15 s por
+      // defecto se quedaban cortos en la ejecucion completa. Al agotarse, su
+      // trabajo pendiente se colaba en la limpieza del test siguiente y lo
+      // tumbaba tambien con un error de clave foranea.
+    }, 60000)
 
     it("no cuenta como activo si la suscripción ya venció", async () => {
       await request(app)
