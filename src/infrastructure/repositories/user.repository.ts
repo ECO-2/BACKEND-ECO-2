@@ -51,6 +51,7 @@ export const updateUserProfile = async (
   userId: string,
   data: {
     username?: string
+    avatar_url?: string | null
     notifications_enabled?: boolean
     reminder_start_hour?: number
     reminder_end_hour?: number

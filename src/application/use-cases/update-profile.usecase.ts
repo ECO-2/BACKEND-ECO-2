@@ -4,6 +4,9 @@ import { findUserByUsername, updateUserProfile } from "@/infrastructure/reposito
 
 const updateProfileSchema = z.object({
   username: z.string().min(3).max(30).optional(),
+  // Id del avatar elegido en la app (no una URL): se guarda en avatar_url, que
+  // ya existia. Se limita el formato para que no entre texto arbitrario.
+  avatar_url: z.string().regex(/^[a-z0-9_-]{1,40}$/).nullable().optional(),
   notifications_enabled: z.boolean().optional(),
   reminder_start_hour: z.number().int().min(6).max(22).optional(),
   reminder_end_hour: z.number().int().min(6).max(22).optional(),
