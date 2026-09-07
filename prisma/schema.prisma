@@ -33,6 +33,18 @@ model User {
   // Fin de la suscripcion O2+. Null en el plan gratuito. Se comprueba junto a
   // plan_type: sin fecha, una suscripcion caducada seria permanente.
   plan_expires_at     DateTime?
+  // Macetas extra compradas en la tienda, por encima del tope del plan
+  // gratuito. Las permanentes no caducan; las de alquiler si.
+  extra_plant_slots       Int       @default(0)
+  rental_plant_slots      Int       @default(0)
+  rental_slots_expires_at DateTime?
+
+  // Macetas heredadas: al caducar O2+ el usuario conserva parte de las macetas
+  // que llego a usar, para no pasar de golpe de ilimitadas a 10. Se liquidan
+  // una sola vez por suscripcion; plus_settled_at marca hasta que caducidad
+  // se hizo ya el calculo.
+  legacy_plant_slots      Int       @default(0)
+  plus_settled_at         DateTime?
   gender              Gender?
   birth_day           DateTime?
   role                String    @default("user")
@@ -51,6 +63,7 @@ model User {
   progress          UserProgress?
   xp_logs           XpLog[]
   seed_transactions SeedTransaction[]
+  avatars           UserAvatar[]
   user_achievements UserAchievement[]
   plant_identifications PlantIdentification[]
   device_tokens DeviceToken[]
@@ -246,6 +259,21 @@ model XpLog {
   created_at  DateTime @default(now())
 
   user User @relation(fields: [user_id], references: [id])
+}
+
+/// Avatares que el usuario ha comprado con semillas.
+///
+/// Tabla propia y no una columna de array en User: la restriccion unica impide
+/// cobrar dos veces el mismo avatar, y queda constancia de cuando se compro.
+model UserAvatar {
+  id          String   @id @default(uuid())
+  user_id     String
+  avatar_id   String
+  acquired_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, avatar_id])
 }
 
 model SeedTransaction {

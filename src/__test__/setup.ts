@@ -11,6 +11,7 @@ beforeEach(async () => {
   await prisma.userPlantTask.deleteMany()
   await prisma.userPlant.deleteMany()
   await prisma.room.deleteMany()
+  await prisma.userAvatar.deleteMany()
   await prisma.deviceToken.deleteMany()
   await prisma.session.deleteMany()
   await prisma.user.deleteMany()

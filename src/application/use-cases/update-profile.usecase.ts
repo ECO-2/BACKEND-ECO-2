@@ -1,6 +1,8 @@
 import { z } from "zod"
 import { AppError } from "@/core/errors/AppError"
 import { findUserByUsername, updateUserProfile } from "@/infrastructure/repositories/user.repository"
+import { canUseAvatar } from "@/domain/avatars/catalog"
+import { ownedAvatarIds } from "@/application/use-cases/avatars/avatars.usecase"
 
 const updateProfileSchema = z.object({
   username: z.string().min(3).max(30).optional(),
@@ -26,6 +28,15 @@ export const updateProfile = async (userId: string, input: unknown) => {
     const existing = await findUserByUsername(data.username)
     if (existing && existing.id !== userId) {
       throw new AppError("Username already taken", 409)
+    }
+  }
+
+  // Sin esta comprobacion se podria fijar avatar_url a uno de pago sin haberlo
+  // comprado: la validacion del esquema solo mira el formato de la cadena.
+  if (data.avatar_url) {
+    const owned = await ownedAvatarIds(userId)
+    if (!canUseAvatar(data.avatar_url, owned)) {
+      throw new AppError("avatar_not_owned", 403)
     }
   }
 
