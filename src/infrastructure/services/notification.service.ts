@@ -1,5 +1,5 @@
 import { firebaseAdmin } from "@/lib/firebase"
-import { resend } from "@/lib/resend"
+import { getResend, isEmailConfigured } from "@/lib/resend"
 import { findUserById } from "@/infrastructure/repositories/user.repository"
 import { findDeviceTokensByUser, deleteDeviceToken } from "@/infrastructure/repositories/device-token.repository"
 
@@ -25,8 +25,11 @@ export const notifyUser = async (
     })
   }
 
-  if (user.email) {
-    resend.emails.send({
+  // Sin clave de correo la notificacion push ya se ha enviado: el correo es
+  // el refuerzo, no el canal principal, y su ausencia no debe hacer fallar
+  // nada.
+  if (user.email && isEmailConfigured()) {
+    getResend().emails.send({
       from: "ECO2 <onboarding@resend.dev>",
       to: user.email,
       subject: title,

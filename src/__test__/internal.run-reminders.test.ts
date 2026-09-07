@@ -13,11 +13,15 @@ jest.mock("@/lib/firebase", () => ({
 }))
 
 jest.mock("@/lib/resend", () => ({
-  resend: {
+  // El cliente se crea al usarlo, no al importar el modulo: sin clave, el
+  // constructor de Resend lanzaba y se llevaba por delante cualquier suite
+  // que tocara notificaciones.
+  isEmailConfigured: () => true,
+  getResend: () => ({
     emails: {
       send: jest.fn().mockResolvedValue({ id: "mock-email-id" })
     }
-  }
+  })
 }))
 
 describe("POST /internal/run-reminders", () => {

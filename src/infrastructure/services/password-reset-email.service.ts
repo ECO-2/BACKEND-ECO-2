@@ -1,4 +1,4 @@
-import { resend } from "@/lib/resend"
+import { getResend, isEmailConfigured } from "@/lib/resend"
 
 /**
  * Remitente del correo. `onboarding@resend.dev` es el dominio de pruebas de
@@ -10,7 +10,18 @@ const FROM = process.env.MAIL_FROM || "ECO2 <onboarding@resend.dev>"
 const MINUTES = 30
 
 export const sendPasswordResetCode = async (to: string, code: string) => {
-  const { error } = await resend.emails.send({
+  // Sin clave configurada no hay envio posible. Se trata como un fallo de
+  // entrega mas -se registra y no se propaga- para que el endpoint siga
+  // respondiendo igual existiera o no el correo.
+  if (!isEmailConfigured()) {
+    console.error("[reset] RESEND_API_KEY no configurada: no se envia el codigo")
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`[reset] (solo dev) codigo para ${to}: ${code}`)
+    }
+    return
+  }
+
+  const { error } = await getResend().emails.send({
     from: FROM,
     to,
     subject: `Tu código de recuperación ECO2: ${code}`,
