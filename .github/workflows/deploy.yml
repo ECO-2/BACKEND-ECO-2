@@ -42,7 +42,16 @@ jobs:
             echo "Se aborta a proposito: es preferible no desplegar a desplegar contra un esquema viejo."
             exit 1
           fi
-          npx prisma migrate deploy
+          # Neon suspende la base cuando no se usa y despertarla puede pasarse
+          # del timeout (P1002). Es un fallo de red, no del esquema, asi que se
+          # reintenta antes de dar por rota la migracion.
+          for intento in 1 2 3; do
+            if npx prisma migrate deploy; then exit 0; fi
+            echo "Intento $intento fallido; se reintenta en $((intento * 10))s"
+            sleep $((intento * 10))
+          done
+          echo "::error::No se pudieron aplicar las migraciones tras 3 intentos."
+          exit 1
 
       - name: Prepare deployment package
         run: |
