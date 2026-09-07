@@ -4,6 +4,7 @@ import { findSpeciesById } from "@/infrastructure/repositories/plant-species.rep
 import { createUserPlant } from "@/infrastructure/repositories/user-plant.repository"
 import { createTask } from "@/infrastructure/repositories/task.repository"
 import { createCareLog } from "@/infrastructure/repositories/care-log.repository"
+import { assertCanAddPlant } from "@/application/services/plan-limits.service"
 
 const createUserPlantSchema = z.object({
   species_id: z.string().uuid(),
@@ -20,6 +21,10 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000
 
 export const createUserPlantUseCase = async (userId: string, input: unknown) => {
   const data = createUserPlantSchema.parse(input)
+
+  // Tope del plan gratuito. Se comprueba antes de tocar nada para no dejar la
+  // especie validada y la planta a medias.
+  await assertCanAddPlant(userId)
   const species = await findSpeciesById(data.species_id)
   if (!species) throw new AppError("Species not found", 404)
 

@@ -30,6 +30,9 @@ model User {
   provider_id         String?
   mfa_enabled         Boolean   @default(false)
   plan_type           String    @default("free")
+  // Fin de la suscripcion O2+. Null en el plan gratuito. Se comprueba junto a
+  // plan_type: sin fecha, una suscripcion caducada seria permanente.
+  plan_expires_at     DateTime?
   gender              Gender?
   birth_day           DateTime?
   role                String    @default("user")

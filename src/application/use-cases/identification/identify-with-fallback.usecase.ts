@@ -4,6 +4,7 @@ import {
   findSpeciesByScientificName,
   createIdentification
 } from "@/infrastructure/repositories/identification.repository"
+import { assertCanScan } from "@/application/services/plan-limits.service"
 
 const fallbackSchema = z.object({
   image_base64: z.string().min(1),
@@ -11,6 +12,9 @@ const fallbackSchema = z.object({
 })
 
 export const identifyWithFallbackUseCase = async (userId: string, input: unknown) => {
+  // Tope diario del plan gratuito, antes de gastar la llamada a la IA.
+  await assertCanScan(userId)
+
   const data = fallbackSchema.parse(input)
 
   if (!isPlantIdConfigured()) {

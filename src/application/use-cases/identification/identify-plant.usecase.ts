@@ -4,6 +4,7 @@ import {
   findSpeciesByScientificName,
   createIdentification
 } from "@/infrastructure/repositories/identification.repository"
+import { assertCanScan } from "@/application/services/plan-limits.service"
 
 const CONFIDENCE_THRESHOLD = 0.70
 
@@ -14,6 +15,9 @@ const identifySchema = z.object({
 })
 
 export const identifyPlantUseCase = async (userId: string, input: unknown) => {
+  // Tope diario del plan gratuito, antes de gastar la llamada a la IA.
+  await assertCanScan(userId)
+
   const data = identifySchema.parse(input)
 
   const normalizedName = data.scientific_name.replace(/_/g, " ")

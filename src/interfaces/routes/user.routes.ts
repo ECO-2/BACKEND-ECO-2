@@ -6,6 +6,11 @@ import { updateProfileController } from "@/interfaces/controllers/profile.contro
 import { deleteMeController, updatePasswordController } from "@/interfaces/controllers/user.controller"
 import { registerDeviceTokenController } from "@/interfaces/controllers/user.controller"
 import { getGreenFootprintController } from "@/interfaces/controllers/green-footprint.controller"
+import {
+  getPlanController,
+  activatePlusController,
+  cancelPlusController
+} from "@/interfaces/controllers/plan.controller"
 
 const router = Router()
 
@@ -37,5 +42,11 @@ router.patch("/password", authenticate, updatePasswordController)
 router.post("/device-token", authenticate, registerDeviceTokenController)
 // CO2 real del jardín del usuario, para "Mi Huella Verde".
 router.get("/green-footprint", authenticate, getGreenFootprintController)
+
+// Plan del usuario y consumo actual (plantas y escaneos de hoy).
+router.get("/plan", authenticate, getPlanController)
+// Activacion SIMULADA de O2+: no hay cobro, la pasarela es una maqueta.
+router.post("/plan/activate", authenticate, activatePlusController)
+router.post("/plan/cancel", authenticate, cancelPlusController)
 
 export default router
