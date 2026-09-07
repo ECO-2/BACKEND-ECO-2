@@ -2,7 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [main]
+    # develop tambien: es donde se trabaja a diario, y sin esto una rotura
+    # solo salia a la luz al abrir el PR hacia main, con todo ya encima.
+    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
@@ -30,6 +32,14 @@ jobs:
 
       - name: Generate Prisma Client
         run: ./node_modules/.bin/prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
+
+      # La base de pruebas tiene que llevar las mismas migraciones que el
+      # codigo que se va a probar. Sin esto, una migracion nueva pasaba en
+      # local -donde se aplico a mano- y reventaba en CI sin motivo aparente.
+      - name: Apply migrations to test database
+        run: ./node_modules/.bin/prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
 
