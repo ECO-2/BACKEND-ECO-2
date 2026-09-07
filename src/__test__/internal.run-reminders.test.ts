@@ -95,6 +95,40 @@ describe("POST /internal/run-reminders", () => {
     expect(res.body.checked).toBeGreaterThanOrEqual(1)
   })
 
+  it("should skip plants whose reminders are muted", async () => {
+    await prisma.user.update({
+      where: { email: "test@eco2.com" },
+      data: { reminder_start_hour: 0, reminder_end_hour: 23 }
+    })
+
+    await request(app)
+      .post("/care/tasks")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        user_plant_id: plantId,
+        task_type: "watering",
+        frequency_days: 7,
+        next_due_at: new Date(Date.now() - 60 * 60 * 1000).toISOString()
+      })
+
+    // Silenciar SOLO esta planta: la cuenta sigue con notificaciones activas.
+    const patch = await request(app)
+      .patch(`/plants/${plantId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ reminders_muted: true })
+
+    expect(patch.status).toBe(200)
+
+    const res = await request(app)
+      .post("/internal/run-reminders")
+      .set("x-internal-key", internalKey)
+
+    expect(res.status).toBe(200)
+    // Ni siquiera se revisa: la planta silenciada queda fuera de la consulta.
+    expect(res.body.checked).toBe(0)
+    expect(res.body.sent).toBe(0)
+  })
+
   it("should skip users with notifications disabled", async () => {
     await prisma.user.update({
       where: { email: "test@eco2.com" },

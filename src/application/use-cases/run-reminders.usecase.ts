@@ -5,7 +5,12 @@ export const runRemindersUseCase = async () => {
   const now = new Date()
 
   const overdueTasks = await prisma.userPlantTask.findMany({
-    where: { next_due_at: { lte: now } },
+    // Se excluyen las plantas silenciadas aqui, en la consulta, y no al
+    // enviar: asi no cuentan siquiera como "revisadas".
+    where: {
+      next_due_at: { lte: now },
+      user_plant: { reminders_muted: false }
+    },
     include: {
       user_plant: {
         include: { user: true }

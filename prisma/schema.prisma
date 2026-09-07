@@ -177,6 +177,9 @@ model UserPlant {
   health_status HealthStatus @default(good)
   acquired_at   DateTime     @default(now())
   last_watered_at DateTime?
+  // Silencia los recordatorios de ESTA planta sin apagar las notificaciones
+  // de toda la cuenta (User.notifications_enabled).
+  reminders_muted Boolean      @default(false)
   created_at    DateTime     @default(now())
   updated_at    DateTime     @updatedAt
   deleted_at    DateTime?

@@ -12,7 +12,9 @@ import { resetPasswordUseCase } from "@/application/use-cases/reset-password.use
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
   try {
 
-    console.log("Registering user with data:", req.body);
+    // Antes esto era `console.log(req.body)`, que dejaba la contraseña en
+    // claro en el log del servidor en cada registro.
+    console.log("Registering user:", req.body?.email)
     const user = await registerUser(req.body)
 
     res.status(201).json({
@@ -65,7 +67,7 @@ export const firebaseLoginController = async (req: Request, res: Response, next:
 export const forgotPasswordController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await forgotPasswordUseCase(req.body)
-    res.status(200).json({ message: "If an account exists with that email, a reset link has been sent" })
+    res.status(200).json({ message: "If an account exists with that email, a reset code has been sent" })
   } catch (error) {
     next(error)
   }

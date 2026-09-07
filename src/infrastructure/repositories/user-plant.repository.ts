@@ -6,6 +6,7 @@ export const createUserPlant = async (userId: string, data: {
   health_status?: "excellent" | "good" | "fair" | "poor" | "critical"
   acquired_at?: Date
   last_watered_at?: Date
+  reminders_muted?: boolean
 }) => {
   return prisma.userPlant.create({
     data: {
@@ -39,6 +40,7 @@ export const updateUserPlant = async (id: string, data: {
   nickname?: string
   health_status?: "excellent" | "good" | "fair" | "poor" | "critical"
   last_watered_at?: Date
+  reminders_muted?: boolean
 }) => {
   return prisma.userPlant.update({
     where: { id },

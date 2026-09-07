@@ -623,18 +623,9 @@ async function main() {
       max_temperature: 35,
       image_url: "https://res.cloudinary.com/dokdkdwvl/image/upload/v1788009302/romero_czdq1e.jpg",
     },
-    {
-      scientific_name: "Aloe barbadensis",
-      common_name: "Sábila de Barbados",
-      category: "herb",
-      light_requirement: "high",
-      water_frequency_days: 14,
-      humidity_preference: "low",
-      air_purification_score: 6,
-      min_temperature: 10,
-      max_temperature: 40,
-      // Sin image_url — no vino en el export manual; falta cargarla.
-    },
+    // "Sábila de Barbados" (Aloe barbadensis) retirada del catálogo: es la
+    // misma planta que "Sábila / Aloe Vera" — Aloe barbadensis es el sinónimo
+    // botánico de Aloe vera — así que estaba duplicada, y además sin foto.
     // ÁRBOLES DE INTERIOR
     {
       scientific_name: "Pachira aquatica",

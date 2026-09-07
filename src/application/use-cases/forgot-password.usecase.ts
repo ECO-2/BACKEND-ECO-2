@@ -1,12 +1,11 @@
 import { z } from "zod"
-import crypto from "crypto"
 import { findUserByEmail, setResetTokenHash } from "@/infrastructure/repositories/user.repository"
+import { generateResetCode, packResetToken } from "@/utils/reset-code"
+import { sendPasswordResetCode } from "@/infrastructure/services/password-reset-email.service"
 
 const forgotPasswordSchema = z.object({
   email: z.string().email()
 })
-
-const hashToken = (token: string) => crypto.createHash("sha256").update(token).digest("hex")
 
 export const forgotPasswordUseCase = async (input: unknown) => {
   const { email } = forgotPasswordSchema.parse(input)
@@ -15,11 +14,11 @@ export const forgotPasswordUseCase = async (input: unknown) => {
   // Responde genérico aunque el usuario no exista, para no filtrar qué correos están registrados
   if (!user) return
 
-  const rawToken = `${Date.now()}.${crypto.randomBytes(32).toString("hex")}`
-  const hash = hashToken(rawToken)
+  const code = generateResetCode()
+  await setResetTokenHash(user.id, packResetToken(code))
 
-  await setResetTokenHash(user.id, hash)
-
-  // TODO: enviar rawToken por correo cuando se configure un proveedor de email.
-  console.log(`Password reset token for ${email}: ${rawToken}`)
+  // El envío se espera para que un fallo del proveedor quede en el log del
+  // servidor, pero su resultado no cambia la respuesta al cliente: hacerlo
+  // delataría qué correos están registrados.
+  await sendPasswordResetCode(email, code)
 }
