@@ -23,3 +23,14 @@ export const findCareLogsByPlant = async (userPlantId: string) => {
     orderBy: { performed_at: "desc" }
   })
 }
+
+export const findCareLogById = async (id: string) => {
+  return prisma.careLog.findUnique({
+    where: { id },
+    include: { user_plant: true }
+  })
+}
+
+export const deleteCareLog = async (id: string) => {
+  return prisma.careLog.delete({ where: { id } })
+}

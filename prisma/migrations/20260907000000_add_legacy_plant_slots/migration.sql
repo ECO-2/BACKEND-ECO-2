@@ -1,0 +1,2 @@
+ALTER TABLE "User" ADD COLUMN "legacy_plant_slots" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "User" ADD COLUMN "plus_settled_at" TIMESTAMP(3);

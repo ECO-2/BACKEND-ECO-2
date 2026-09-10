@@ -179,6 +179,58 @@ export const openApiSpec = {
         }
       }
     },
+    "/auth/forgot-password": {
+      post: {
+        tags: ["Auth"],
+        summary: "Request a password reset",
+        description: "Sends a reset token if the email exists. Always returns 200 to avoid leaking which emails are registered.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["email"],
+                properties: {
+                  email: { type: "string", format: "email", example: "user@example.com" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "Reset flow initiated (if the email exists)" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      post: {
+        tags: ["Auth"],
+        summary: "Reset password using a token",
+        description: "Token is single-use and expires 30 minutes after being issued.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["token", "new_password"],
+                properties: {
+                  token: { type: "string" },
+                  new_password: { type: "string", minLength: 6, example: "newSecurePass456" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "Password reset successfully" },
+          400: { description: "Invalid or expired token" },
+          422: { description: "Validation error" }
+        }
+      }
+    },
     "/user/me": {
       get: {
         tags: ["User"],
@@ -206,6 +258,33 @@ export const openApiSpec = {
             }
           },
           401: { description: "Invalid or missing token" }
+        }
+      },
+      delete: {
+        tags: ["User"],
+        summary: "Delete the authenticated user's account and all related data",
+        description: "Permanently deletes the user, their sessions, plants, tasks, care logs, identifications, and gamification data. Requires the current password for local accounts (not required for Firebase/OAuth accounts).",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  password: {
+                    type: "string",
+                    description: "Required only for accounts with a local password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          204: { description: "Account deleted" },
+          401: { description: "Unauthorized or incorrect password" },
+          404: { description: "User not found" },
+          422: { description: "Password required for local accounts" }
         }
       }
     },
@@ -333,6 +412,34 @@ export const openApiSpec = {
           401: { description: "Missing or invalid token" },
           409: { description: "Username already taken" },
           422: { description: "Validation error or invalid hour range" }
+        }
+      }
+    },
+    "/user/password": {
+      patch: {
+        tags: ["User"],
+        summary: "Change the authenticated user's password",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["current_password", "new_password"],
+                properties: {
+                  current_password: { type: "string", example: "secret123" },
+                  new_password: { type: "string", minLength: 6, example: "newSecurePass456" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          204: { description: "Password updated" },
+          400: { description: "Account does not use a password (Firebase/OAuth)" },
+          401: { description: "Current password is incorrect" },
+          422: { description: "Validation error" }
         }
       }
     },
@@ -586,6 +693,16 @@ export const openApiSpec = {
           404: { description: "Plant not found" },
           422: { description: "Validation error" }
         }
+      },
+      get: {
+        tags: ["Care"],
+        summary: "Get all tasks across all plants for the current user",
+        description: "Ideal for a dashboard view — returns tasks for every plant owned by the user in a single call, instead of querying plant by plant.",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: { description: "List of tasks ordered by next_due_at, includes plant info" },
+          401: { description: "Unauthorized" }
+        }
       }
     },
     "/care/plants/{plantId}/tasks": {
@@ -609,6 +726,45 @@ export const openApiSpec = {
         parameters: [{ name: "taskId", in: "path", required: true, schema: { type: "string" } }],
         responses: {
           200: { description: "Task completed, care log created" },
+          401: { description: "Unauthorized" },
+          404: { description: "Task not found" }
+        }
+      }
+    },
+    "/care/tasks/{taskId}": {
+      patch: {
+        tags: ["Care"],
+        summary: "Update a task's frequency or next due date",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "taskId", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  frequency_days: { type: "integer", minimum: 1 },
+                  next_due_at: { type: "string", format: "date-time" }
+                },
+                description: "At least one field must be provided"
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: "Task updated" },
+          401: { description: "Unauthorized" },
+          404: { description: "Task not found" },
+          422: { description: "Validation error — no fields provided" }
+        }
+      },
+      delete: {
+        tags: ["Care"],
+        summary: "Delete a scheduled task",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "taskId", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          204: { description: "Task deleted" },
           401: { description: "Unauthorized" },
           404: { description: "Task not found" }
         }
@@ -640,6 +796,20 @@ export const openApiSpec = {
           401: { description: "Unauthorized" },
           404: { description: "Plant not found" },
           422: { description: "Validation error" }
+        }
+      }
+    },
+    "/care/logs/{logId}": {
+      delete: {
+        tags: ["Care"],
+        summary: "Delete a care log entry",
+        description: "Use to undo or remove a care log created by mistake.",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "logId", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          204: { description: "Care log deleted" },
+          401: { description: "Unauthorized" },
+          404: { description: "Care log not found" }
         }
       }
     },

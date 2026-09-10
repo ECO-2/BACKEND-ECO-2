@@ -40,3 +40,25 @@ export const completeTask = async (id: string) => {
     }
   })
 }
+
+export const findTasksByUser = async (userId: string) => {
+  return prisma.userPlantTask.findMany({
+    where: { user_plant: { user_id: userId } },
+    orderBy: { next_due_at: "asc" },
+    include: { user_plant: true }
+  })
+}
+
+export const updateTask = async (id: string, data: {
+  frequency_days?: number
+  next_due_at?: Date
+}) => {
+  return prisma.userPlantTask.update({
+    where: { id },
+    data
+  })
+}
+
+export const deleteTask = async (id: string) => {
+  return prisma.userPlantTask.delete({ where: { id } })
+}

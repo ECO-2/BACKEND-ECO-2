@@ -1,0 +1,362 @@
+{
+  "matched": [
+    {
+      "id": "8efd1a5a-2df5-4c9a-a484-1a7b40389429",
+      "common_name": "Aglaonema / Chinese Evergreen",
+      "scientific_name": "Aglaonema commutatum",
+      "file": "aglaonema-commutatum.jpg",
+      "had_image": false
+    },
+    {
+      "id": "9929b689-bcef-4389-8291-44f6dda45185",
+      "common_name": "Albahaca",
+      "scientific_name": "Ocimum basilicum",
+      "file": "albahaca.jpg",
+      "had_image": false
+    },
+    {
+      "id": "96c18c91-be2e-46ff-b74d-0d6710fb2268",
+      "common_name": "Amapola / Hibisco",
+      "scientific_name": "Hibiscus rosa-sinensis",
+      "file": "amapola.jpg",
+      "had_image": false
+    },
+    {
+      "id": "a4ce066d-090f-4cc0-b620-ef420ac90e80",
+      "common_name": "Anturio / Flor de Cera",
+      "scientific_name": "Anthurium andraeanum",
+      "file": "anthurium-andraeanum.jpg",
+      "had_image": false
+    },
+    {
+      "id": "f5d58a37-0683-4745-bbd1-c7ec45ee0ad4",
+      "common_name": "Árbol de Jade / Planta de Dinero",
+      "scientific_name": "Crassula ovata",
+      "file": "arbol-de-jade.jpg",
+      "had_image": false
+    },
+    {
+      "id": "31a7185a-f96d-4d81-9de8-c4fc2964c716",
+      "common_name": "Árbol del Dinero / Money Tree",
+      "scientific_name": "Pachira aquatica",
+      "file": "arbol-del-dinero.jpg",
+      "had_image": false
+    },
+    {
+      "id": "8cff6125-2117-4823-afa2-93b62ac16b7a",
+      "common_name": "Bromelia / Piña Ornamental",
+      "scientific_name": "Bromelia fastuosa",
+      "file": "bromelia-fastuosa.jpg",
+      "had_image": false
+    },
+    {
+      "id": "3e4e870b-0511-4f8d-b0cb-880a8b363e05",
+      "common_name": "Cactus Columnar / Cardón",
+      "scientific_name": "Cereus repandus",
+      "file": "cereus-repandus.jpg",
+      "had_image": false
+    },
+    {
+      "id": "e75b9a35-23f4-40b0-9b8a-50fd367e8a47",
+      "common_name": "Cactus de Navidad",
+      "scientific_name": "Schlumbergera truncata",
+      "file": "cactus-de-navidad.jpg",
+      "had_image": false
+    },
+    {
+      "id": "6de5e8d8-3ce6-48d6-bc96-202452f4bb94",
+      "common_name": "Calatea Ornata / Planta Pavo Real",
+      "scientific_name": "Calathea ornata",
+      "file": "calatea-ornata.jpg",
+      "had_image": false
+    },
+    {
+      "id": "daddb594-3d03-44e3-ae85-5309b107b17d",
+      "common_name": "Cinta / Malamadre / Spider Plant",
+      "scientific_name": "Chlorophytum comosum",
+      "file": "malamadre.jpg",
+      "had_image": false
+    },
+    {
+      "id": "2569b072-a094-4583-8093-20384b242519",
+      "common_name": "Cola de Burro / Sedum",
+      "scientific_name": "Sedum morganianum",
+      "file": "cola-de-burro.jpg",
+      "had_image": false
+    },
+    {
+      "id": "306dd738-cd48-47fb-a60c-ad22ce861f2a",
+      "common_name": "Colocasia / Yautía Ornamental",
+      "scientific_name": "Colocasia esculenta",
+      "file": "colocasia.jpg",
+      "had_image": false
+    },
+    {
+      "id": "e96b6ad9-c7d8-45fa-bdb4-f910153d5b5b",
+      "common_name": "Crotón / Planta de Colores",
+      "scientific_name": "Croton variegatum",
+      "file": "croton.jpg",
+      "had_image": false
+    },
+    {
+      "id": "66136ad2-de81-4168-8c50-1f4fdb86fcf4",
+      "common_name": "Cuna de Moisés / Lirio de Paz",
+      "scientific_name": "Spathiphyllum wallisii",
+      "file": "cuna-de-moises.jpg",
+      "had_image": false
+    },
+    {
+      "id": "efe32f79-31e5-4305-9e07-eecb07084400",
+      "common_name": "Diefenbaquia / Lotería",
+      "scientific_name": "Dieffenbachia seguine",
+      "file": "diefenbaquia.jpg",
+      "had_image": false
+    },
+    {
+      "id": "1873b514-82ee-460a-b41a-fa821cbd81f0",
+      "common_name": "Dracena Fragrans / Palo de Brasil",
+      "scientific_name": "Dracaena fragrans",
+      "file": "dracena-fragrans.jpg",
+      "had_image": false
+    },
+    {
+      "id": "2bfc5dee-2e26-469b-8546-cd899b291f67",
+      "common_name": "Dracena Marginata / Palma de Madagascar",
+      "scientific_name": "Dracaena marginata",
+      "file": "dracena-marginata.jpg",
+      "had_image": false
+    },
+    {
+      "id": "e2998c16-369a-44a9-9ef7-8d378dfa4a64",
+      "common_name": "Echeveria / Rosa de Piedra",
+      "scientific_name": "Echeveria elegans",
+      "file": "echeveria.jpg",
+      "had_image": false
+    },
+    {
+      "id": "a21a29b2-6e74-4348-8423-bbe322bed400",
+      "common_name": "Ficus Elastica / Caucho",
+      "scientific_name": "Ficus elastica",
+      "file": "ficus-elastica.jpg",
+      "had_image": false
+    },
+    {
+      "id": "18c169d2-71e0-4005-ad80-015b59310205",
+      "common_name": "Ficus Lyrata / Ficus Violín",
+      "scientific_name": "Ficus lyrata",
+      "file": "ficus-lyrata.jpg",
+      "had_image": false
+    },
+    {
+      "id": "359cdbeb-07d3-4c41-a3c7-c2a7390f6531",
+      "common_name": "Filodendro Árbol",
+      "scientific_name": "Philodendron bipinnatifidum",
+      "file": "filodendro-arbol.jpg",
+      "had_image": false
+    },
+    {
+      "id": "729fed1a-9363-47ee-8cfb-4ba849e201e9",
+      "common_name": "Filodendro Corazón",
+      "scientific_name": "Philodendron hederaceum",
+      "file": "filodendro-corazon.jpg",
+      "had_image": false
+    },
+    {
+      "id": "5d1cd8cd-4720-4d50-a1f1-c7fe3590b373",
+      "common_name": "Gardenia",
+      "scientific_name": "Gardenia jasminoides",
+      "file": "gardenia.jpg",
+      "had_image": false
+    },
+    {
+      "id": "3608fbc8-ddef-4c76-8801-3503ccdc1218",
+      "common_name": "Haworthia / Suculenta Cebra",
+      "scientific_name": "Haworthiopsis attenuata",
+      "file": "haworthia.jpg",
+      "had_image": false
+    },
+    {
+      "id": "13bf0dd3-7e1b-4e10-bcec-6d3cd1c47a3b",
+      "common_name": "Helecho Nido de Pájaro",
+      "scientific_name": "Asplenium nidus",
+      "file": "helecho-nido-de-pajaro.jpg",
+      "had_image": false
+    },
+    {
+      "id": "f4879ba0-f9ba-4646-a090-821c2d7ad047",
+      "common_name": "Hiedra / Ivy",
+      "scientific_name": "Hedera helix",
+      "file": "hiedra.jpg",
+      "had_image": false
+    },
+    {
+      "id": "516d5075-ef6c-4f60-9000-5472125768c8",
+      "common_name": "Maranta / Planta Rezadora",
+      "scientific_name": "Maranta leuconeura",
+      "file": "maranta.jpg",
+      "had_image": false
+    },
+    {
+      "id": "38a23366-5460-4291-884a-c3a3f7321e92",
+      "common_name": "Monstera / Costilla de Adán",
+      "scientific_name": "Monstera deliciosa",
+      "file": "monstera-costilla-de-adan.jpg",
+      "had_image": false
+    },
+    {
+      "id": "4ad37bcf-90f3-45e4-8768-246b507bcd74",
+      "common_name": "Monstera Suizo / Queso",
+      "scientific_name": "Monstera adansonii",
+      "file": "monstera-suizo.jpg",
+      "had_image": false
+    },
+    {
+      "id": "a3ad0001-f255-40e6-baa7-8ee1064497c1",
+      "common_name": "Nopal / Tuna de Orejas",
+      "scientific_name": "Opuntia microdasys",
+      "file": "nopal.jpg",
+      "had_image": false
+    },
+    {
+      "id": "2768bd3c-1968-4846-adc3-07df2e8cd95a",
+      "common_name": "Palma Areca / Palma Bambú",
+      "scientific_name": "Chrysalidocarpus lutescens",
+      "file": "palma-areca.jpg",
+      "had_image": false
+    },
+    {
+      "id": "243d2742-5261-41f8-aff4-cefe6fd6ab78",
+      "common_name": "Palma Dama / Lady Palm",
+      "scientific_name": "Rhapis excelsa",
+      "file": "palma-dama.jpg",
+      "had_image": false
+    },
+    {
+      "id": "f1c30014-a4ea-487b-9c19-f075cadb607a",
+      "common_name": "Palma Kentia",
+      "scientific_name": "Howea forsteriana",
+      "file": "palma-kentia.jpg",
+      "had_image": false
+    },
+    {
+      "id": "5caa0bfb-fa67-49e0-be01-e5301893ee4f",
+      "common_name": "Pata de Elefante / Nolina",
+      "scientific_name": "Beaucarnea recurvata",
+      "file": "pata-de-elefante.jpg",
+      "had_image": false
+    },
+    {
+      "id": "a144b44e-0c89-4844-9a41-7dda4e659c0b",
+      "common_name": "Peperomia / Baby Rubber Plant",
+      "scientific_name": "Peperomia obtusifolia",
+      "file": "peperomia.jpg",
+      "had_image": false
+    },
+    {
+      "id": "875cd1ed-1d5d-4919-b705-81596a3b4e79",
+      "common_name": "Pothos / Potos",
+      "scientific_name": "Epipremnum aureum",
+      "file": "pothos.jpg",
+      "had_image": false
+    },
+    {
+      "id": "68f71bbf-c46a-41f0-bcc1-39c779705310",
+      "common_name": "Romero",
+      "scientific_name": "Rosmarinus officinalis",
+      "file": "romero.jpg",
+      "had_image": false
+    },
+    {
+      "id": "e4364083-3c5d-47df-a3c6-eb3d16b30251",
+      "common_name": "Sábila / Aloe Vera",
+      "scientific_name": "Aloe vera",
+      "file": "sabila.jpg",
+      "had_image": false
+    },
+    {
+      "id": "08a6f7c8-7c6b-4e74-ab77-e2f5196b7f86",
+      "common_name": "Sanseveria / Lengua de Suegra",
+      "scientific_name": "Dracaena trifasciata",
+      "file": "sanseveria.jpg",
+      "had_image": false
+    },
+    {
+      "id": "295a5274-43a7-4a7a-b689-ec672d629b15",
+      "common_name": "Schefflera / Paragüitas",
+      "scientific_name": "Schefflera actinophylla",
+      "file": "paraguitas.jpg",
+      "had_image": false
+    },
+    {
+      "id": "8d97d35a-f3a6-4ff0-a78f-b2c35c0061ca",
+      "common_name": "Singonio / Pata de Ganso",
+      "scientific_name": "Syngonium podophyllum",
+      "file": "singonio.jpg",
+      "had_image": false
+    },
+    {
+      "id": "e1975595-7954-4150-86d5-69a2fa20b1b6",
+      "common_name": "Trébol Morado / False Shamrock",
+      "scientific_name": "Oxalis triangularis",
+      "file": "trebol-morado.jpg",
+      "had_image": false
+    },
+    {
+      "id": "97e06069-e366-4718-a4ab-67e7a9e71236",
+      "common_name": "Trinitaria / Frangipani",
+      "scientific_name": "Plumeria rubra",
+      "file": "trinitaria.jpg",
+      "had_image": false
+    },
+    {
+      "id": "178b52d3-5929-4a2e-bc70-9a810af6ae15",
+      "common_name": "Yerba Buena / Menta",
+      "scientific_name": "Mentha spicata",
+      "file": "yerba-buena.jpg",
+      "had_image": false
+    },
+    {
+      "id": "820b7f02-1922-4d34-8b8e-2fc704b926be",
+      "common_name": "ZZ Plant / Planta Eternity",
+      "scientific_name": "Zamioculcas zamiifolia",
+      "file": "zz-plant.jpg",
+      "had_image": false
+    }
+  ],
+  "unmatchedSpecies": [
+    {
+      "common_name": "Calatea Medallón",
+      "scientific_name": "Calathea medallion",
+      "had_image": false
+    },
+    {
+      "common_name": "Helecho Boston / Helecho Espada",
+      "scientific_name": "Nephrolepis exaltata",
+      "had_image": false
+    },
+    {
+      "common_name": "Miramelinda / Impatiens",
+      "scientific_name": "Impatiens walleriana",
+      "had_image": false
+    },
+    {
+      "common_name": "Sábila de Barbados",
+      "scientific_name": "Aloe barbadensis",
+      "had_image": false
+    },
+    {
+      "common_name": "Tradescantia / Amor de Hombre",
+      "scientific_name": "Tradescantia zebrina",
+      "had_image": false
+    }
+  ],
+  "unusedFiles": [
+    "aglaonema.jpg",
+    "calatea-de-medallon.jpg",
+    "helecho-de-boston.jpg",
+    "hibiscus-rosa-sinensis.jpg",
+    "miarmelinda.jpg",
+    "ocimun-basilicum.jpg",
+    "trasdencantia.jpg"
+  ]
+}

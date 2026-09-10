@@ -3,6 +3,19 @@ import { authenticate } from "../middleware/authenticate"
 import { findUserById } from "@/infrastructure/repositories/user.repository"
 import { completeOnboardingController } from "@/interfaces/controllers/onboarding.controller"
 import { updateProfileController } from "@/interfaces/controllers/profile.controller"
+import { deleteMeController, updatePasswordController } from "@/interfaces/controllers/user.controller"
+import { registerDeviceTokenController } from "@/interfaces/controllers/user.controller"
+import { getGreenFootprintController } from "@/interfaces/controllers/green-footprint.controller"
+import {
+  getPlanController,
+  activatePlusController,
+  cancelPlusController
+} from "@/interfaces/controllers/plan.controller"
+import {
+  listAvatarsController,
+  purchaseAvatarController
+} from "@/interfaces/controllers/avatar.controller"
+import { redeemStoreItemController } from "@/interfaces/controllers/store.controller"
 
 const router = Router()
 
@@ -29,5 +42,24 @@ router.get("/me", authenticate, async (req, res, next) => {
 
 router.patch("/onboarding", authenticate, completeOnboardingController)
 router.patch("/profile", authenticate, updateProfileController)
+router.delete("/me", authenticate, deleteMeController)
+router.patch("/password", authenticate, updatePasswordController)
+router.post("/device-token", authenticate, registerDeviceTokenController)
+// CO2 real del jardín del usuario, para "Mi Huella Verde".
+router.get("/green-footprint", authenticate, getGreenFootprintController)
+
+// Plan del usuario y consumo actual (plantas y escaneos de hoy).
+router.get("/plan", authenticate, getPlanController)
+
+// Avatares: catalogo con precio y propiedad, y compra con semillas.
+router.get("/avatars", authenticate, listAvatarsController)
+router.post("/avatars/purchase", authenticate, purchaseAvatarController)
+
+// Canje de articulos de la tienda: descuenta semillas Y entrega, en la misma
+// transaccion. Antes la tienda solo descontaba.
+router.post("/store/redeem", authenticate, redeemStoreItemController)
+// Activacion SIMULADA de O2+: no hay cobro, la pasarela es una maqueta.
+router.post("/plan/activate", authenticate, activatePlusController)
+router.post("/plan/cancel", authenticate, cancelPlusController)
 
 export default router

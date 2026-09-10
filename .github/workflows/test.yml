@@ -2,13 +2,21 @@ name: Tests
 
 on:
   push:
-    branches: [main]
+    # develop tambien: es donde se trabaja a diario, y sin esto una rotura
+    # solo salia a la luz al abrir el PR hacia main, con todo ya encima.
+    branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  # Para relanzar la suite sin tener que inventarse un commit.
+  workflow_dispatch:
 
 concurrency:
-  group: tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  # Grupo unico a proposito, no uno por rama: todas las ejecuciones comparten
+  # LA MISMA base de pruebas y cada suite vacia las tablas entre pruebas, asi
+  # que dos jobs a la vez se pisan y fallan por turnos. Al empujar a una rama
+  # con PR abierto se disparaban dos -push y pull_request- contra esa base.
+  group: tests-shared-database
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -33,6 +41,25 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
 
+      # La base de pruebas tiene que llevar las mismas migraciones que el
+      # codigo que se va a probar. Sin esto, una migracion nueva pasaba en
+      # local -donde se aplico a mano- y reventaba en CI sin motivo aparente.
+      - name: Apply migrations to test database
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
+        run: |
+          # Neon suspende la base cuando no se usa y despertarla puede pasarse
+          # del timeout (P1002). Es un fallo de red, no del esquema, asi que se
+          # reintenta antes de dar por rota la migracion.
+          for intento in 1 2 3; do
+            if ./node_modules/.bin/prisma migrate deploy; then exit 0; fi
+            echo "Intento $intento fallido; se reintenta en $((intento * 10))s"
+            sleep $((intento * 10))
+          done
+          echo "::error::No se pudieron aplicar las migraciones tras 3 intentos."
+          exit 1
+
+
       - name: Run tests
         env:
           NODE_ENV: test
@@ -43,4 +70,5 @@ jobs:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
           FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_API_KEY }}
         run: npm test

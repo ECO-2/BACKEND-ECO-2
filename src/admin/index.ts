@@ -2,9 +2,21 @@ import type { Express } from "express"
 import path from "path"
 import { createPrismaResourceClass } from "./adapters/prisma-resource"
 import { userResourceConfig } from "./resources/user.resource"
+import { sessionResourceConfig } from "./resources/session.resource"
 import { plantSpeciesResourceConfig } from "./resources/plant-species.resource"
+import { roomResourceConfig } from "./resources/room.resource"
+import { userPlantResourceConfig } from "./resources/user-plant.resource"
+import { userPlantTaskResourceConfig } from "./resources/user-plant-task.resource"
+import { careLogResourceConfig } from "./resources/care-log.resource"
+import { plantIdentificationResourceConfig } from "./resources/plant-identification.resource"
 import { achievementResourceConfig } from "./resources/achievement.resource"
+import { userAchievementResourceConfig } from "./resources/user-achievement.resource"
+import { userProgressResourceConfig } from "./resources/user-progress.resource"
+import { xpLogResourceConfig } from "./resources/xp-log.resource"
+import { seedTransactionResourceConfig } from "./resources/seed-transaction.resource"
+import { deviceTokenResourceConfig } from "./resources/device-token.resource"
 import { authenticateAdmin } from "./auth"
+import { SPECIES_DIR, resizeSpeciesPhoto } from "./resize-species-photo"
 
 const ADMIN_ROOT_PATH = "/admin"
 const DEV_ONLY_FALLBACK_SECRET = "dev-only-insecure-secret-change-me"
@@ -36,10 +48,13 @@ const dynamicImport = new Function("specifier", "return import(specifier)") as <
  * (supertest) doesn't pay the cost of loading AdminJS at all.
  */
 export async function mountAdmin(app: Express): Promise<void> {
-  const { default: AdminJS, BaseResource, BaseProperty, BaseRecord, Router: AdminRouter } =
+  const { default: AdminJS, BaseResource, BaseProperty, BaseRecord, ComponentLoader, Router: AdminRouter } =
     await dynamicImport<typeof import("adminjs")>("adminjs")
   const { default: AdminJSExpress } = await dynamicImport<typeof import("@adminjs/express")>(
     "@adminjs/express",
+  )
+  const { default: uploadFileFeature } = await dynamicImport<typeof import("@adminjs/upload")>(
+    "@adminjs/upload",
   )
 
   // @adminjs/express sirve estos bundles con `res.sendFile(asset.src)` sin
@@ -61,12 +76,57 @@ export async function mountAdmin(app: Express): Promise<void> {
 
   const PrismaResource = createPrismaResourceClass({ BaseResource, BaseProperty, BaseRecord })
 
+  const nav = (name: string) => ({ navigation: { name, icon: "Database" } })
+
+  const componentLoader = new ComponentLoader()
+
+  // Lets an admin drop a photo straight into the PlantSpecies edit/new form
+  // (a "Foto" field appears there) instead of running a script by hand.
+  // Storage is local disk (public/species/, already served by
+  // express.static) — no Cloudinary/Firebase/S3 account needed. The raw
+  // upload is written under `image_key`; resizeSpeciesPhoto (an `after`
+  // hook chained right after this feature's own hook) turns it into the
+  // actual image_url/thumbnail_url the app reads.
+  const speciesPhotoUpload = uploadFileFeature({
+    componentLoader,
+    provider: { local: { bucket: SPECIES_DIR, opts: {} } },
+    properties: { key: "image_key", file: "photo" },
+    validation: { mimeTypes: ["image/jpeg", "image/png", "image/webp"], maxSize: 8 * 1024 * 1024 },
+  })
+
   const admin = new AdminJS({
     rootPath: ADMIN_ROOT_PATH,
+    componentLoader,
     resources: [
-      { resource: new PrismaResource(userResourceConfig) },
-      { resource: new PrismaResource(plantSpeciesResourceConfig) },
-      { resource: new PrismaResource(achievementResourceConfig) },
+      // Usuarios y cuentas
+      { resource: new PrismaResource(userResourceConfig), options: nav("Usuarios y cuentas") },
+      { resource: new PrismaResource(sessionResourceConfig), options: nav("Usuarios y cuentas") },
+      { resource: new PrismaResource(deviceTokenResourceConfig), options: nav("Usuarios y cuentas") },
+
+      // Plantas y jardín
+      {
+        resource: new PrismaResource(plantSpeciesResourceConfig),
+        options: {
+          ...nav("Plantas y jardín"),
+          actions: {
+            new: { after: resizeSpeciesPhoto },
+            edit: { after: resizeSpeciesPhoto },
+          },
+        },
+        features: [speciesPhotoUpload],
+      },
+      { resource: new PrismaResource(roomResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(userPlantResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(userPlantTaskResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(careLogResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(plantIdentificationResourceConfig), options: nav("Plantas y jardín") },
+
+      // Gamificación
+      { resource: new PrismaResource(achievementResourceConfig), options: nav("Gamificación") },
+      { resource: new PrismaResource(userAchievementResourceConfig), options: nav("Gamificación") },
+      { resource: new PrismaResource(userProgressResourceConfig), options: nav("Gamificación") },
+      { resource: new PrismaResource(xpLogResourceConfig), options: nav("Gamificación") },
+      { resource: new PrismaResource(seedTransactionResourceConfig), options: nav("Gamificación") },
     ],
     branding: {
       companyName: "ECO2 Backoffice",
@@ -99,6 +159,11 @@ export async function mountAdmin(app: Express): Promise<void> {
       resave: false,
       saveUninitialized: true,
     },
+    // Lets a field genuinely accept more than one file at once if a future
+    // resource needs it. Doesn't affect the single-file PlantSpecies photo
+    // upload above — see the big comment in resize-species-photo.ts for why
+    // that one can't rely on @adminjs/upload's own file-handling hook.
+    { multiples: true },
   )
 
   app.use(admin.options.rootPath, router)

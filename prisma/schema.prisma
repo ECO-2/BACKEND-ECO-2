@@ -30,6 +30,21 @@ model User {
   provider_id         String?
   mfa_enabled         Boolean   @default(false)
   plan_type           String    @default("free")
+  // Fin de la suscripcion O2+. Null en el plan gratuito. Se comprueba junto a
+  // plan_type: sin fecha, una suscripcion caducada seria permanente.
+  plan_expires_at     DateTime?
+  // Macetas extra compradas en la tienda, por encima del tope del plan
+  // gratuito. Las permanentes no caducan; las de alquiler si.
+  extra_plant_slots       Int       @default(0)
+  rental_plant_slots      Int       @default(0)
+  rental_slots_expires_at DateTime?
+
+  // Macetas heredadas: al caducar O2+ el usuario conserva parte de las macetas
+  // que llego a usar, para no pasar de golpe de ilimitadas a 10. Se liquidan
+  // una sola vez por suscripcion; plus_settled_at marca hasta que caducidad
+  // se hizo ya el calculo.
+  legacy_plant_slots      Int       @default(0)
+  plus_settled_at         DateTime?
   gender              Gender?
   birth_day           DateTime?
   role                String    @default("user")
@@ -48,8 +63,10 @@ model User {
   progress          UserProgress?
   xp_logs           XpLog[]
   seed_transactions SeedTransaction[]
+  avatars           UserAvatar[]
   user_achievements UserAchievement[]
   plant_identifications PlantIdentification[]
+  device_tokens DeviceToken[]
 }
 
 model Session {
@@ -124,11 +141,44 @@ model PlantSpecies {
   air_purification_score Int    @default(0)
   min_temperature      Int
   max_temperature      Int
+  // Gramos de CO2 que fija al día un ejemplar adulto de esta especie en
+  // interior. Es el dato que alimenta "Mi Huella Verde".
+  //
+  // Mientras esté vacío, el backend cae en una estimación derivada de
+  // air_purification_score y la marca como estimada, en vez de presentar un
+  // número inventado como si fuera medido. Debe rellenarse con criterio
+  // agronómico por especie: depende sobre todo del área foliar y de la luz
+  // que recibe la planta, no del "score" de purificación.
+  //
+  // Condición de referencia de los valores cargados: ejemplar adulto
+  // aclimatado, maceta de 10 cm, interior, 20 µmol·m⁻²·s⁻¹ PPFD, fotoperiodo
+  // de 12 h, 21 °C día / 18 °C noche. Valor NETO a 24 h (ya descuenta la
+  // respiración nocturna).
+  co2_absorption_g_day Decimal?
+  // Qué respalda el número: `medido`, `medido_cualitativo`, `proxy_genero`,
+  // `proxy_familia`, `grupo_funcional`, `cam_bajo_pcl`, `c3_bajo_pcl`.
+  //
+  // Es imprescindible guardarlo junto al valor: de las 51 especies del
+  // catálogo solo 9 son mediciones publicadas; el resto son derivaciones de
+  // distinto fundamento. Sin este campo las 51 filas serían indistinguibles y
+  // la app presentaría una inferencia con la misma autoridad que un dato.
+  co2_evidence_level   String?
+  // Rango publicado del valor, cuando existe. Permite comunicar incertidumbre
+  // en vez de un número seco.
+  co2_range_min        Decimal?
+  co2_range_max        Decimal?
+  // C3 o CAM. Las CAM fijan CO2 de noche y por debajo del punto de
+  // compensación lumínica de un interior no fijan nada neto.
+  metabolism           String?
   // Populated via the admin backoffice once a real photo is sourced/licensed
-  // for the species. Both are plain URLs (e.g. Firebase Storage / Azure Blob
-  // + CDN) — no binary image data is ever stored in the database.
+  // for the species. image_url/thumbnail_url are plain public URLs served by
+  // this same backend from /public/species (express.static) — no third-party
+  // image host required. image_key is the filename @adminjs/upload writes
+  // the raw upload to before it's resized into the two public files above;
+  // it has no meaning outside the admin upload flow.
   image_url            String?
   thumbnail_url         String?
+  image_key            String?
   created_at           DateTime @default(now())
 
   user_plants UserPlant[]
@@ -143,6 +193,9 @@ model UserPlant {
   health_status HealthStatus @default(good)
   acquired_at   DateTime     @default(now())
   last_watered_at DateTime?
+  // Silencia los recordatorios de ESTA planta sin apagar las notificaciones
+  // de toda la cuenta (User.notifications_enabled).
+  reminders_muted Boolean      @default(false)
   created_at    DateTime     @default(now())
   updated_at    DateTime     @updatedAt
   deleted_at    DateTime?
@@ -208,6 +261,21 @@ model XpLog {
   user User @relation(fields: [user_id], references: [id])
 }
 
+/// Avatares que el usuario ha comprado con semillas.
+///
+/// Tabla propia y no una columna de array en User: la restriccion unica impide
+/// cobrar dos veces el mismo avatar, y queda constancia de cuando se compro.
+model UserAvatar {
+  id          String   @id @default(uuid())
+  user_id     String
+  avatar_id   String
+  acquired_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, avatar_id])
+}
+
 model SeedTransaction {
   id         String   @id @default(uuid())
   user_id    String
@@ -256,4 +324,13 @@ model PlantIdentification {
 
   user    User          @relation(fields: [user_id], references: [id])
   species PlantSpecies? @relation(fields: [identified_species_id], references: [id])
+}
+
+model DeviceToken {
+  id         String   @id @default(uuid())
+  user_id    String
+  token      String   @unique
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
 }

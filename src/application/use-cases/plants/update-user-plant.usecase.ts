@@ -5,7 +5,9 @@ import { findUserPlantById, updateUserPlant } from "@/infrastructure/repositorie
 const updateUserPlantSchema = z.object({
   nickname: z.string().min(1).max(50).optional(),
   health_status: z.enum(["excellent", "good", "fair", "poor", "critical"]).optional(),
-  last_watered_at: z.coerce.date().optional()
+  last_watered_at: z.coerce.date().optional(),
+  // Silencia los recordatorios de esta planta en concreto.
+  reminders_muted: z.boolean().optional()
 })
 
 export const updateUserPlantUseCase = async (userId: string, plantId: string, input: unknown) => {

@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "types": ["node", "jest"]
   },
-  "exclude": ["node_modules", "prisma.config.ts", "jest.config.js", "generated", "prisma/seed.ts"]
+  "exclude": ["node_modules", "prisma.config.ts", "jest.config.js", "generated", "prisma/seed.ts", "scripts"]
 }

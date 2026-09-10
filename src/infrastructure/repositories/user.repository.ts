@@ -51,6 +51,7 @@ export const updateUserProfile = async (
   userId: string,
   data: {
     username?: string
+    avatar_url?: string | null
     notifications_enabled?: boolean
     reminder_start_hour?: number
     reminder_end_hour?: number
@@ -59,5 +60,44 @@ export const updateUserProfile = async (
   return prisma.user.update({
     where: { id: userId },
     data
+  })
+}
+
+export const updateUserPassword = async (userId: string, password_hash: string) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { password_hash }
+  })
+}
+
+export const setResetTokenHash = async (userId: string, hash: string | null) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { reset_token_hash: hash }
+  })
+}
+
+// La columna guarda `<vencimientoEnMs>.<sha256>`, así que se busca por el
+// sufijo. El hash es un sha256 completo: no colisiona en la práctica, y la
+// tabla de usuarios es pequeña, de modo que el escaneo no pesa.
+export const findUserByResetTokenHash = async (hash: string) => {
+  return prisma.user.findFirst({
+    where: { reset_token_hash: { endsWith: `.${hash}` } }
+  })
+}
+
+export const deleteUserAndData = async (userId: string) => {
+  return prisma.$transaction(async (tx) => {
+    await tx.careLog.deleteMany({ where: { user_plant: { user_id: userId } } })
+    await tx.userPlantTask.deleteMany({ where: { user_plant: { user_id: userId } } })
+    await tx.userPlant.deleteMany({ where: { user_id: userId } })
+    await tx.plantIdentification.deleteMany({ where: { user_id: userId } })
+    await tx.userAchievement.deleteMany({ where: { user_id: userId } })
+    await tx.xpLog.deleteMany({ where: { user_id: userId } })
+    await tx.seedTransaction.deleteMany({ where: { user_id: userId } })
+    await tx.userProgress.deleteMany({ where: { user_id: userId } })
+    await tx.session.deleteMany({ where: { user_id: userId } })
+    await tx.room.deleteMany({ where: { user_id: userId } })
+    await tx.user.delete({ where: { id: userId } })
   })
 }
