@@ -10,6 +10,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "jsx": "react-jsx",
     "types": ["node", "jest"]
   },
   "exclude": ["node_modules", "prisma.config.ts", "jest.config.js", "generated", "prisma/seed.ts", "scripts"]
