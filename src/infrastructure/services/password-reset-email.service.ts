@@ -1,13 +1,14 @@
 import { getResend, isEmailConfigured } from "@/lib/resend"
 
 const FROM = process.env.MAIL_FROM || "ECO2 <no-reply@eco2app.com>"
+const isDebugLoggingAllowed = process.env.ALLOW_DEBUG_EMAIL_LOGGING === "true"
 
 const MINUTES = 30
 
 export const sendPasswordResetCode = async (to: string, code: string) => {
   if (!isEmailConfigured()) {
     console.error("[reset] RESEND_API_KEY no configurada: no se envia el codigo")
-    if (process.env.NODE_ENV !== "production") {
+    if (isDebugLoggingAllowed) {
       console.warn(`[reset] (solo dev) codigo para ${to}: ${code}`)
     }
     return
@@ -30,7 +31,7 @@ export const sendPasswordResetCode = async (to: string, code: string) => {
 
   if (error) {
     console.error("[reset] Resend rechazó el envío:", error)
-    if (process.env.NODE_ENV !== "production") {
+    if (isDebugLoggingAllowed) {
       console.warn(`[reset] (solo dev) código para ${to}: ${code}`)
     }
     return false
