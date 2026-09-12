@@ -101,6 +101,9 @@ export async function mountAdmin(app: Express): Promise<void> {
   const admin = new AdminJS({
     rootPath: ADMIN_ROOT_PATH,
     componentLoader,
+    assets: {
+      styles: ["/admin-custom.css"],
+    },
     dashboard: {
       component: Components.Dashboard,
     },
@@ -149,6 +152,7 @@ export async function mountAdmin(app: Express): Promise<void> {
         colors: {
           primary100: "#0D2B31",
           primary80: "#10454F",
+          grey40: "#10454F",
           primary60: "#8A9A65",
           primary20: "#F2F4EB",
           accent: "#B4E000",
@@ -156,6 +160,7 @@ export async function mountAdmin(app: Express): Promise<void> {
           grey20: "#ccc9b3",
           grey60: "#1c1c1a",
           container: "#ccc9b3",
+          inputBorder: "#000000",
         },  
         borders: {
           bg: "1px solid #ccc9b3",

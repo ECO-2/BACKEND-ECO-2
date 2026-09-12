@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
   return (
     <Box variant="grey" p="xl">
       <Box mb="xl">
-        <img src="/logo2.png" alt="ECO2" style={{ height: 64, marginBottom: -20 }} />
+        <img src="/icono.png" alt="ECO2" style={{ height: 64, marginBottom: -20 }} />
         <H2>ECO2 Backoffice</H2>
         <Text color="grey60">Quick access to the sections you use most.</Text>
       </Box>
