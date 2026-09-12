@@ -25,12 +25,9 @@ export const notifyUser = async (
     })
   }
 
-  // Sin clave de correo la notificacion push ya se ha enviado: el correo es
-  // el refuerzo, no el canal principal, y su ausencia no debe hacer fallar
-  // nada.
   if (user.email && isEmailConfigured()) {
     getResend().emails.send({
-      from: "ECO2 <onboarding@resend.dev>",
+      from: process.env.MAIL_FROM || "ECO2 <no-reply@eco2app.com>",
       to: user.email,
       subject: title,
       html: `<p>${body}</p>`

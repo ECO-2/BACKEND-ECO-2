@@ -1,0 +1,13 @@
+[data-css$="-table"] {
+  border-left-color: black !important;
+  border-right-color: black!important;
+}
+
+.adminjs_Table td,
+.adminjs_Table th {
+  border-color: #000000 !important;
+}
+
+.adminjs_Table tr {
+  border-color: #000000 !important;
+}

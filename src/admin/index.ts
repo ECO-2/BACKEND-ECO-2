@@ -80,6 +80,10 @@ export async function mountAdmin(app: Express): Promise<void> {
 
   const componentLoader = new ComponentLoader()
 
+  const Components = {
+    Dashboard: componentLoader.add("Dashboard", "./components/dashboard"),
+  }
+
   // Lets an admin drop a photo straight into the PlantSpecies edit/new form
   // (a "Foto" field appears there) instead of running a script by hand.
   // Storage is local disk (public/species/, already served by
@@ -97,17 +101,28 @@ export async function mountAdmin(app: Express): Promise<void> {
   const admin = new AdminJS({
     rootPath: ADMIN_ROOT_PATH,
     componentLoader,
+    assets: {
+      styles: ["/admin-custom.css"],
+    },
+    dashboard: {
+      component: Components.Dashboard,
+    },
     resources: [
-      // Usuarios y cuentas
-      { resource: new PrismaResource(userResourceConfig), options: nav("Usuarios y cuentas") },
-      { resource: new PrismaResource(sessionResourceConfig), options: nav("Usuarios y cuentas") },
-      { resource: new PrismaResource(deviceTokenResourceConfig), options: nav("Usuarios y cuentas") },
+      // Users and accounts
+      { resource: new PrismaResource(userResourceConfig), options: nav("Users & Accounts") },
+      { resource: new PrismaResource(sessionResourceConfig), options: nav("Users & Accounts") },
+      { resource: new PrismaResource(deviceTokenResourceConfig), options: nav("Users & Accounts") },
 
-      // Plantas y jardín
+      // Plants and garden
       {
         resource: new PrismaResource(plantSpeciesResourceConfig),
         options: {
-          ...nav("Plantas y jardín"),
+          ...nav("Plants & Garden"),
+          properties: {
+            image_key: { isVisible: false },
+            image_url: { isVisible: true, label: "Photo (URL)" },
+            thumbnail_url: { isVisible: true, label: "Thumbnail (URL)" },
+          },
           actions: {
             new: { after: resizeSpeciesPhoto },
             edit: { after: resizeSpeciesPhoto },
@@ -115,23 +130,58 @@ export async function mountAdmin(app: Express): Promise<void> {
         },
         features: [speciesPhotoUpload],
       },
-      { resource: new PrismaResource(roomResourceConfig), options: nav("Plantas y jardín") },
-      { resource: new PrismaResource(userPlantResourceConfig), options: nav("Plantas y jardín") },
-      { resource: new PrismaResource(userPlantTaskResourceConfig), options: nav("Plantas y jardín") },
-      { resource: new PrismaResource(careLogResourceConfig), options: nav("Plantas y jardín") },
-      { resource: new PrismaResource(plantIdentificationResourceConfig), options: nav("Plantas y jardín") },
+      { resource: new PrismaResource(roomResourceConfig), options: nav("Plants & Garden") },
+      { resource: new PrismaResource(userPlantResourceConfig), options: nav("Plants & Garden") },
+      { resource: new PrismaResource(userPlantTaskResourceConfig), options: nav("Plants & Garden") },
+      { resource: new PrismaResource(careLogResourceConfig), options: nav("Plants & Garden") },
+      { resource: new PrismaResource(plantIdentificationResourceConfig), options: nav("Plants & Garden") },
 
-      // Gamificación
-      { resource: new PrismaResource(achievementResourceConfig), options: nav("Gamificación") },
-      { resource: new PrismaResource(userAchievementResourceConfig), options: nav("Gamificación") },
-      { resource: new PrismaResource(userProgressResourceConfig), options: nav("Gamificación") },
-      { resource: new PrismaResource(xpLogResourceConfig), options: nav("Gamificación") },
-      { resource: new PrismaResource(seedTransactionResourceConfig), options: nav("Gamificación") },
+      // Gamification
+      { resource: new PrismaResource(achievementResourceConfig), options: nav("Gamification") },
+      { resource: new PrismaResource(userAchievementResourceConfig), options: nav("Gamification") },
+      { resource: new PrismaResource(userProgressResourceConfig), options: nav("Gamification") },
+      { resource: new PrismaResource(xpLogResourceConfig), options: nav("Gamification") },
+      { resource: new PrismaResource(seedTransactionResourceConfig), options: nav("Gamification") },
     ],
     branding: {
       companyName: "ECO2 Backoffice",
       withMadeWithLove: false,
+      favicon: '/icono.png',
+      logo: "/logo2.png",
+      theme: {
+        colors: {
+          primary100: "#0D2B31",
+          primary80: "#10454F",
+          grey40: "#10454F",
+          primary60: "#8A9A65",
+          primary20: "#F2F4EB",
+          accent: "#B4E000",
+          bg: "#ccc9b3",
+          grey20: "#ccc9b3",
+          grey60: "#1c1c1a",
+          container: "#ccc9b3",
+          inputBorder: "#000000",
+        },  
+        borders: {
+          bg: "1px solid #ccc9b3",
+          default: "1px solid #ccc9b3",
+        }
+      }, 
+
     },
+    locale: {
+      language: "en",
+      translations: {
+        en: {
+          components: {
+            Login: {
+              welcomeHeader: "Welcome",
+              welcomeMessage: "Backoffice for the ECO2 plant-care platform. Manage species, users, care plans, and gamification data in one place."
+            }
+          }
+        }
+      }
+    }
   })
 
   const cookiePassword = process.env.ADMIN_COOKIE_SECRET
@@ -165,6 +215,8 @@ export async function mountAdmin(app: Express): Promise<void> {
     // that one can't rely on @adminjs/upload's own file-handling hook.
     { multiples: true },
   )
+
+  await admin.watch()
 
   app.use(admin.options.rootPath, router)
 }

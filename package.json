@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/ECO-2/BACKEND-ECO-2#readme",
   "dependencies": {
+    "@adminjs/design-system": "^4.1.1",
     "@adminjs/express": "^6.1.1",
     "@adminjs/upload": "^4.0.2",
     "@prisma/adapter-pg": "^7.8.0",
