@@ -27,7 +27,8 @@ const loadPlan = async (userId: string): Promise<PlanHolder> => {
       rental_plant_slots: true,
       rental_slots_expires_at: true,
       legacy_plant_slots: true,
-      plus_settled_at: true
+      plus_settled_at: true,
+      email_verified: true
     }
   })
   if (!user) throw new AppError("User not found", 404)

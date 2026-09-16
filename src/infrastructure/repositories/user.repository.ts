@@ -115,6 +115,6 @@ export const findUserByEmailVerifyTokenHash = async (hash: string) => {
 export const markEmailVerified = async (userId: string) => {
   return prisma.user.update({
     where: { id: userId },
-    data: { email_verified: true, email_verify_token_hash: null }
+    data: { email_verified: true }
   })
 }
