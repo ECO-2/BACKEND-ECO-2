@@ -17,6 +17,11 @@ describe("Plant Identification", () => {
 
     accessToken = login.body.accessToken
 
+    await prisma.user.update({
+      where: { email: "test@eco2.com" },
+      data: { email_verified: true }
+    })
+
     const species = await prisma.plantSpecies.create({
       data: {
         scientific_name: "Monstera deliciosa",

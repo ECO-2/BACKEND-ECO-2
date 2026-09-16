@@ -25,6 +25,11 @@ describe("Canje de artículos de la tienda", () => {
     accessToken = login.body.accessToken
     const user = await prisma.user.findUnique({ where: { email: "test@eco2.com" } })
     userId = user!.id
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { email_verified: true }
+    })
   })
 
   const auth = (r: request.Test) => r.set("Authorization", `Bearer ${accessToken}`)
