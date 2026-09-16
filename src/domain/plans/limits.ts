@@ -13,6 +13,14 @@ export const PLAN_PLUS = "plus"
 /** Escaneos que puede hacer al día una cuenta gratuita. */
 export const FREE_DAILY_SCANS = 5
 
+/**
+ * Escaneos que puede hacer al día una cuenta sin verificar, sin importar el
+ * plan. Es un tope aparte del gratuito/plus: incentiva a verificar sin
+ * bloquear del todo el flujo principal de la app (el scanner) para alguien
+ * que recién se registró.
+ */
+export const UNVERIFIED_DAILY_SCANS = 1
+
 /** Plantas que puede tener a la vez una cuenta gratuita. */
 export const FREE_MAX_PLANTS = 10
 
@@ -32,12 +40,11 @@ export const LEGACY_POT_CAP = 5
 export interface PlanHolder {
   plan_type: string
   plan_expires_at: Date | null
-  /** Macetas extra compradas en la tienda. */
   extra_plant_slots?: number
   rental_plant_slots?: number
   rental_slots_expires_at?: Date | null
-  /** Macetas conservadas de una suscripcion O2+ ya caducada. */
   legacy_plant_slots?: number
+  email_verified?: boolean
 }
 
 /**
@@ -51,8 +58,10 @@ export const isPlusActive = (user: PlanHolder, now = new Date()): boolean =>
   user.plan_expires_at > now
 
 /** Tope de escaneos diarios, o null si son ilimitados. */
-export const dailyScanLimit = (user: PlanHolder, now = new Date()): number | null =>
-  isPlusActive(user, now) ? null : FREE_DAILY_SCANS
+export const dailyScanLimit = (user: PlanHolder, now = new Date()): number | null => {
+  if (user.email_verified === false) return UNVERIFIED_DAILY_SCANS
+  return isPlusActive(user, now) ? null : FREE_DAILY_SCANS
+}
 
 /**
  * Tope de plantas, o null si son ilimitadas.
