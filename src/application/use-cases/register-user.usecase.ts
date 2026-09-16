@@ -1,7 +1,9 @@
 import { z } from "zod"
 import { hashPassword } from "@/utils/hash"
-import { createUser, findUserByEmail } from "@/infrastructure/repositories/user.repository"
+import { createUser, findUserByEmail, setEmailVerifyTokenHash } from "@/infrastructure/repositories/user.repository"
 import { AppError } from "@/core/errors/AppError"
+import { generateVerifyToken, packVerifyToken } from "@/utils/email-verification-token"
+import { sendVerificationEmail } from "@/infrastructure/services/verification-email.service"
 
 const registerSchema = z.object({
   email: z.email(),
@@ -24,6 +26,10 @@ export const registerUser = async (input: unknown) => {
     email: data.email,
     password_hash
   })
+
+  const token = generateVerifyToken()
+  await setEmailVerifyTokenHash(user.id, packVerifyToken(token))
+  sendVerificationEmail(data.email, token).catch(() => {})
 
   return user
 }
