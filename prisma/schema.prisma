@@ -336,3 +336,12 @@ model DeviceToken {
 
   user User @relation(fields: [user_id], references: [id])
 }
+
+model MissingSpeciesSuggestion {
+  id                String   @id @default(uuid())
+  scientific_name    String   @unique
+  common_name        String?
+  times_requested    Int      @default(1)
+  last_requested_at  DateTime @default(now())
+  created_at         DateTime @default(now())
+}
