@@ -5,6 +5,7 @@ import {
   createIdentification
 } from "@/infrastructure/repositories/identification.repository"
 import { assertCanScan } from "@/application/services/plan-limits.service"
+import { recordMissingSpecies } from "@/infrastructure/repositories/missing-species.repository"
 
 const fallbackSchema = z.object({
   image_base64: z.string().min(1),
@@ -54,9 +55,9 @@ export const identifyWithFallbackUseCase = async (userId: string, input: unknown
     image_url: data.image_url
   })
 
-  // Para cada alternativa, buscamos si también está en nuestro catálogo —
-  // solo tiene sentido mostrarle al usuario una alternativa que sí pueda
-  // agregar a su jardín.
+  if (!species) {
+    await recordMissingSpecies(result.scientific_name, result.common_name)
+  }
   const alternates = (
     await Promise.all(
       result.alternates.map(async (alt) => {

@@ -27,7 +27,8 @@ const loadPlan = async (userId: string): Promise<PlanHolder> => {
       rental_plant_slots: true,
       rental_slots_expires_at: true,
       legacy_plant_slots: true,
-      plus_settled_at: true
+      plus_settled_at: true,
+      email_verified: true
     }
   })
   if (!user) throw new AppError("User not found", 404)
@@ -100,13 +101,22 @@ export const assertCanAddPlant = async (userId: string, now = new Date()) => {
 }
 
 /** Lanza 403 si el usuario ya gastó sus escaneos del día. */
-export const assertCanScan = async (userId: string, now = new Date()) => {
-  const plan = await loadPlan(userId)
-  const limit = dailyScanLimit(plan, now)
+export const assertCanScan = async (userId: string) => {
+  const user = await loadPlan(userId)
+  const limit = dailyScanLimit(user)
   if (limit === null) return
 
-  const used = await countScansToday(userId, now)
-  if (used >= limit) {
+  const todaysScans = await prisma.plantIdentification.findMany({
+    where: { user_id: userId, created_at: { gte: startOfToday() } },
+    select: { source: true }
+  })
+
+  const weightedCount = todaysScans.reduce(
+    (total, scan) => total + (scan.source === "plant_id_api" ? 2 : 1),
+    0
+  )
+
+  if (weightedCount >= limit) {
     throw new AppError("scan_limit_reached", 403)
   }
 }

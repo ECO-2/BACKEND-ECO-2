@@ -56,6 +56,8 @@ model User {
   notifications_enabled     Boolean   @default(true)
   reminder_start_hour       Int       @default(8)  
   reminder_end_hour         Int       @default(21)
+  email_verified              Boolean   @default(false)
+  email_verify_token_hash     String?
 
   sessions Session[]
   rooms Room[]
@@ -333,4 +335,13 @@ model DeviceToken {
   created_at DateTime @default(now())
 
   user User @relation(fields: [user_id], references: [id])
+}
+
+model MissingSpeciesSuggestion {
+  id                String   @id @default(uuid())
+  scientific_name    String   @unique
+  common_name        String?
+  times_requested    Int      @default(1)
+  last_requested_at  DateTime @default(now())
+  created_at         DateTime @default(now())
 }

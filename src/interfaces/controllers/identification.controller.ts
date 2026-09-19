@@ -6,7 +6,11 @@ import { identifyWithFallbackUseCase } from "@/application/use-cases/identificat
 export const identifyPlantController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await identifyPlantUseCase(req.user!.sub, req.body)
-    res.status(201).json(result)
+    res.status(201).json({
+      configured: true,
+      alternates: [],
+      ...result
+    })
   } catch (error) { next(error) }
 }
 
