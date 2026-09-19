@@ -21,17 +21,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      # Azure compila el paquete al recibirlo y, si falla, no se entera nadie:
-      # la app se queda con la version anterior sin aviso. Compilar aqui hace
-      # que un error de tipos rompa el despliegue en vez de pasar en silencio.
       - name: Verify build
         run: npm run build
 
-      # Las migraciones se aplican ANTES de subir el codigo. Si esto falla, el
-      # despliegue se detiene y produccion se queda como estaba, que es lo
-      # correcto: subir codigo que consulta columnas inexistentes tumba la API
-      # entera, no solo las pantallas nuevas.
       - name: Apply database migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
