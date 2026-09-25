@@ -10,6 +10,7 @@ import careRoutes from "@/interfaces/routes/care.routes"
 import gamificationRoutes from "@/interfaces/routes/gamification.routes"
 import identificationRoutes from "@/interfaces/routes/identification.routes"
 import internalRoutes from "@/interfaces/routes/internal.routes"
+import co2ReadingRoutes from "@/interfaces/routes/co2-reading.routes"
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.use("/care", careRoutes)
 app.use("/gamification", gamificationRoutes)
 app.use("/identifications", identificationRoutes)
 app.use("/internal", internalRoutes)
+app.use("/co2-readings", co2ReadingRoutes)
 
 app.get("/openapi.json", (req, res) => {
   res.json(openApiSpec)
