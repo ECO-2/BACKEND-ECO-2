@@ -17,6 +17,7 @@ import { seedTransactionResourceConfig } from "./resources/seed-transaction.reso
 import { deviceTokenResourceConfig } from "./resources/device-token.resource"
 import { authenticateAdmin } from "./auth"
 import { SPECIES_DIR, resizeSpeciesPhoto } from "./resize-species-photo"
+import { missingSpeciesSuggestionResourceConfig } from "./resources/missing-species-suggestion.resource"
 
 const ADMIN_ROOT_PATH = "/admin"
 const DEV_ONLY_FALLBACK_SECRET = "dev-only-insecure-secret-change-me"
@@ -130,11 +131,11 @@ export async function mountAdmin(app: Express): Promise<void> {
         },
         features: [speciesPhotoUpload],
       },
-      { resource: new PrismaResource(roomResourceConfig), options: nav("Plants & Garden") },
       { resource: new PrismaResource(userPlantResourceConfig), options: nav("Plants & Garden") },
       { resource: new PrismaResource(userPlantTaskResourceConfig), options: nav("Plants & Garden") },
       { resource: new PrismaResource(careLogResourceConfig), options: nav("Plants & Garden") },
       { resource: new PrismaResource(plantIdentificationResourceConfig), options: nav("Plants & Garden") },
+      { resource: new PrismaResource(missingSpeciesSuggestionResourceConfig), options: nav("Plants & Garden") },
 
       // Gamification
       { resource: new PrismaResource(achievementResourceConfig), options: nav("Gamification") },

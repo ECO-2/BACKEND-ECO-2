@@ -8,7 +8,17 @@ export const loginRateLimit = rateLimit({
   message: {
     error: "Too many login attempts, please try again later"
   },
-  skipSuccessfulRequests: true
+  skipSuccessfulRequests: true,
+
+  // Un 5xx no gasta cuota. Si la base no responde, el login falla por culpa
+  // del servidor y no del usuario: contarlo dejaba a alguien bloqueado quince
+  // minutos por una avería nuestra, justo cuando vuelve a intentarlo porque
+  // "no le funciona". Solo cuentan los rechazos reales de credenciales.
+  requestWasSuccessful: (_req, res) => res.statusCode >= 500,
+
+  // Fuera de producción no hay a quién proteger de la fuerza bruta, y en
+  // cambio bloquea a quien está probando la app contra su propio servidor.
+  skip: () => process.env.NODE_ENV !== "production"
 })
 
 // El código de recuperación son 8 caracteres sobre un alfabeto de 32 (40 bits),

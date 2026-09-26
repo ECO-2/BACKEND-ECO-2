@@ -69,6 +69,7 @@ model User {
   user_achievements UserAchievement[]
   plant_identifications PlantIdentification[]
   device_tokens DeviceToken[]
+  co2_readings Co2Reading[]
 }
 
 model Session {
@@ -344,4 +345,13 @@ model MissingSpeciesSuggestion {
   times_requested    Int      @default(1)
   last_requested_at  DateTime @default(now())
   created_at         DateTime @default(now())
+}
+
+model Co2Reading {
+  id          String   @id @default(uuid())
+  user_id     String
+  co2_ppm     Int
+  recorded_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
 }
