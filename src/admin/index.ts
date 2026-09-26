@@ -130,7 +130,6 @@ export async function mountAdmin(app: Express): Promise<void> {
         },
         features: [speciesPhotoUpload],
       },
-      { resource: new PrismaResource(roomResourceConfig), options: nav("Plants & Garden") },
       { resource: new PrismaResource(userPlantResourceConfig), options: nav("Plants & Garden") },
       { resource: new PrismaResource(userPlantTaskResourceConfig), options: nav("Plants & Garden") },
       { resource: new PrismaResource(careLogResourceConfig), options: nav("Plants & Garden") },
