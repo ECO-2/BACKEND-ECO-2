@@ -11,6 +11,7 @@ import gamificationRoutes from "@/interfaces/routes/gamification.routes"
 import identificationRoutes from "@/interfaces/routes/identification.routes"
 import internalRoutes from "@/interfaces/routes/internal.routes"
 import co2ReadingRoutes from "@/interfaces/routes/co2-reading.routes"
+import appConfigRoutes from "@/interfaces/routes/app-config.routes"
 
 const app = express()
 
@@ -35,6 +36,7 @@ app.use("/gamification", gamificationRoutes)
 app.use("/identifications", identificationRoutes)
 app.use("/internal", internalRoutes)
 app.use("/co2-readings", co2ReadingRoutes)
+app.use("/app-config", appConfigRoutes)
 
 app.get("/openapi.json", (req, res) => {
   res.json(openApiSpec)
