@@ -7,6 +7,7 @@ export const appConfigResourceConfig: PrismaResourceConfig = {
   fields: [
     { path: "id", type: "string", isId: true, readOnly: true },
     { path: "use_custom_model", type: "boolean" },
+    { path: "show_iot_feature", type: "boolean" },
     { path: "updated_at", type: "datetime", readOnly: true },
   ],
 }

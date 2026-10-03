@@ -359,5 +359,6 @@ model Co2Reading {
 model AppConfig {
   id               String   @id @default("singleton")
   use_custom_model Boolean  @default(true)
+  show_iot_feature Boolean  @default(true)
   updated_at       DateTime @updatedAt
 }
