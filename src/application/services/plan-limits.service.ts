@@ -106,17 +106,8 @@ export const assertCanScan = async (userId: string) => {
   const limit = dailyScanLimit(user)
   if (limit === null) return
 
-  const todaysScans = await prisma.plantIdentification.findMany({
-    where: { user_id: userId, created_at: { gte: startOfToday() } },
-    select: { source: true }
-  })
-
-  const weightedCount = todaysScans.reduce(
-    (total, scan) => total + (scan.source === "plant_id_api" ? 2 : 1),
-    0
-  )
-
-  if (weightedCount >= limit) {
+  const count = await countScansToday(userId)
+  if (count >= limit) {
     throw new AppError("scan_limit_reached", 403)
   }
 }
