@@ -18,6 +18,7 @@ import { deviceTokenResourceConfig } from "./resources/device-token.resource"
 import { authenticateAdmin } from "./auth"
 import { SPECIES_DIR, resizeSpeciesPhoto } from "./resize-species-photo"
 import { missingSpeciesSuggestionResourceConfig } from "./resources/missing-species-suggestion.resource"
+import { appConfigResourceConfig } from "./resources/app-config.resource"
 
 const ADMIN_ROOT_PATH = "/admin"
 const DEV_ONLY_FALLBACK_SECRET = "dev-only-insecure-secret-change-me"
@@ -143,6 +144,7 @@ export async function mountAdmin(app: Express): Promise<void> {
       { resource: new PrismaResource(userProgressResourceConfig), options: nav("Gamification") },
       { resource: new PrismaResource(xpLogResourceConfig), options: nav("Gamification") },
       { resource: new PrismaResource(seedTransactionResourceConfig), options: nav("Gamification") },
+      { resource: new PrismaResource(appConfigResourceConfig), options: nav("App Settings") },
     ],
     branding: {
       companyName: "ECO2 Backoffice",
