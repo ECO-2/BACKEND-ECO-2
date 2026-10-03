@@ -355,3 +355,9 @@ model Co2Reading {
 
   user User @relation(fields: [user_id], references: [id])
 }
+
+model AppConfig {
+  id               String   @id @default("singleton")
+  use_custom_model Boolean  @default(true)
+  updated_at       DateTime @updatedAt
+}
