@@ -34,3 +34,10 @@ export const findCareLogById = async (id: string) => {
 export const deleteCareLog = async (id: string) => {
   return prisma.careLog.delete({ where: { id } })
 }
+
+export const findRecentCareLog = async (userPlantId: string, taskType: TaskType, since: Date) => {
+  return prisma.careLog.findFirst({
+    where: { user_plant_id: userPlantId, task_type: taskType, performed_at: { gte: since } },
+    orderBy: { performed_at: "desc" }
+  })
+}

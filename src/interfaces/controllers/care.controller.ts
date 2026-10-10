@@ -8,6 +8,7 @@ import { getAllTasksUseCase } from "@/application/use-cases/care/get-all-tasks.u
 import { updateTaskUseCase } from "@/application/use-cases/care/update-task.usecase"
 import { deleteTaskUseCase } from "@/application/use-cases/care/delete-task.usecase"
 import { deleteCareLogUseCase } from "@/application/use-cases/care/delete-care-log.usecase"
+import { createDeviceCareLogUseCase } from "@/application/use-cases/care/create-device-care-log.usecase"
 
 export const createTaskController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -69,5 +70,12 @@ export const deleteCareLogController = async (req: Request, res: Response, next:
   try {
     await deleteCareLogUseCase(req.user!.sub, req.params.logId as string)
     res.status(204).send()
+  } catch (error) { next(error) }
+}
+
+export const createDeviceCareLogController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { log, created } = await createDeviceCareLogUseCase(req.body)
+    res.status(created ? 201 : 200).json(log)
   } catch (error) { next(error) }
 }
