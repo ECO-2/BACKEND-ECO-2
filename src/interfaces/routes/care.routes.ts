@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { authenticate } from "@/interfaces/middleware/authenticate"
+import { requireDeviceKey } from "@/interfaces/middleware/device-auth"
 import {
   createTaskController,
   getTasksController,
@@ -8,11 +9,14 @@ import {
   updateTaskController,
   deleteTaskController,
   createCareLogController,
+  createDeviceCareLogController,
   getCareLogsController,
   deleteCareLogController
 } from "@/interfaces/controllers/care.controller"
 
 const router = Router()
+
+router.post("/device-logs", requireDeviceKey, createDeviceCareLogController)
 
 router.use(authenticate)
 
