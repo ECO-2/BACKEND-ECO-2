@@ -39,10 +39,6 @@ model User {
   rental_plant_slots      Int       @default(0)
   rental_slots_expires_at DateTime?
 
-  // Macetas heredadas: al caducar O2+ el usuario conserva parte de las macetas
-  // que llego a usar, para no pasar de golpe de ilimitadas a 10. Se liquidan
-  // una sola vez por suscripcion; plus_settled_at marca hasta que caducidad
-  // se hizo ya el calculo.
   legacy_plant_slots      Int       @default(0)
   plus_settled_at         DateTime?
   gender              Gender?
@@ -70,6 +66,7 @@ model User {
   plant_identifications PlantIdentification[]
   device_tokens DeviceToken[]
   co2_readings Co2Reading[]
+  payments Payment[]
 }
 
 model Session {
@@ -357,8 +354,29 @@ model Co2Reading {
 }
 
 model AppConfig {
-  id               String   @id @default("singleton")
-  use_custom_model Boolean  @default(true)
-  show_iot_feature Boolean  @default(true)
-  updated_at       DateTime @updatedAt
+  id                      String   @id @default("singleton")
+  use_custom_model        Boolean  @default(true)
+  show_iot_feature        Boolean  @default(true)
+  paypal_checkout_enabled Boolean  @default(false)
+  updated_at              DateTime @updatedAt
+}
+
+enum PaymentStatus {
+  pending
+  completed
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  user_id           String
+  provider          String        @default("paypal")
+  provider_order_id String        @unique
+  amount_cents      Int
+  currency          String
+  months            Int
+  status            PaymentStatus @default(pending)
+  created_at        DateTime      @default(now())
+  completed_at      DateTime?
+
+  user User @relation(fields: [user_id], references: [id])
 }
