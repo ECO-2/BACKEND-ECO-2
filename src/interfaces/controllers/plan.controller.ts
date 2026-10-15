@@ -4,6 +4,8 @@ import {
   activatePlusUseCase,
   cancelPlusUseCase
 } from "@/application/use-cases/plan/activate-plus.usecase"
+import { AppError } from "@/core/errors/AppError"
+import { isPaypalCheckoutEnabled } from "@/application/services/billing-config.service"
 
 export const getPlanController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -13,6 +15,7 @@ export const getPlanController = async (req: Request, res: Response, next: NextF
 
 export const activatePlusController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if (await isPaypalCheckoutEnabled()) throw new AppError("simulated_activation_disabled", 403)
     res.status(200).json(await activatePlusUseCase(req.user!.sub, req.body))
   } catch (error) { next(error) }
 }
@@ -22,3 +25,4 @@ export const cancelPlusController = async (req: Request, res: Response, next: Ne
     res.status(200).json(await cancelPlusUseCase(req.user!.sub))
   } catch (error) { next(error) }
 }
+

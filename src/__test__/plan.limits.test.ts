@@ -8,6 +8,13 @@ describe("Límites del plan gratuito y O2+", () => {
   let speciesId: string
 
   beforeEach(async () => {
+
+    await prisma.appConfig.upsert({
+      where: { id: "singleton" },
+      update: { paypal_checkout_enabled: false },
+      create: { id: "singleton", paypal_checkout_enabled: false }
+    })
+
     await request(app)
       .post("/auth/register")
       .send({ email: "test@eco2.com", password: "secret123" })
