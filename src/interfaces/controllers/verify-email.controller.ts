@@ -6,6 +6,7 @@ export const verifyEmailController = async (req: Request, res: Response) => {
     const result = await verifyEmailUseCase({ token: req.query.token })
     res.status(200).send(renderVerifyPage({
       success: true,
+      alreadyVerified: result.alreadyVerified,
       message: result.alreadyVerified
         ? "Tu correo ya estaba verificado."
         : "¡Correo verificado! Ganaste 10 semillas 🌱"
@@ -18,8 +19,12 @@ export const verifyEmailController = async (req: Request, res: Response) => {
   }
 }
 
-function renderVerifyPage({ success, message }: { success: boolean; message: string }) {
-  const emoji = success ? "🌱" : "🥀"
+function renderVerifyPage({
+  success,
+  message,
+  alreadyVerified = false
+}: { success: boolean; message: string; alreadyVerified?: boolean }) {
+  const emoji = !success ? "🥀" : alreadyVerified ? "🥀" : "🌱"
   const title = success ? "Email Verification" : "Verification Failed"
 
   return `<!DOCTYPE html>

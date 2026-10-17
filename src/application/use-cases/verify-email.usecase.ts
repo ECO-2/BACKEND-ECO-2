@@ -9,7 +9,7 @@ import { hashVerifyToken, unpackVerifyToken } from "@/utils/email-verification-t
 
 const schema = z.object({ token: z.string().min(1) })
 
-const VERIFY_SEED_REWARD = 10
+export const VERIFY_SEED_REWARD = 10
 
 export const verifyEmailUseCase = async (input: unknown) => {
   const { token } = schema.parse(input)

@@ -6,6 +6,7 @@ export const createUser = async (data: {
   password_hash: string | null
   provider?: string
   provider_id?: string | null
+  email_verified?: boolean
 }) => {
   return prisma.user.create({
     data: {
@@ -14,6 +15,7 @@ export const createUser = async (data: {
       password_hash: data.password_hash,
       provider: data.provider ?? "local",
       provider_id: data.provider_id ?? null,
+      email_verified: data.email_verified ?? false,
     }
   })
 }
@@ -117,4 +119,12 @@ export const markEmailVerified = async (userId: string) => {
     where: { id: userId },
     data: { email_verified: true }
   })
+}
+
+export const markEmailVerifiedIfPending = async (userId: string) => {
+  const result = await prisma.user.updateMany({
+    where: { id: userId, email_verified: false },
+    data: { email_verified: true }
+  })
+  return result.count === 1
 }
