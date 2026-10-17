@@ -135,6 +135,7 @@ export const getPlanStatus = async (userId: string, now = new Date()) => {
     plants_used: plants,
     plants_limit: maxPlants(plan, now),
     scans_used_today: scans,
-    scans_limit: dailyScanLimit(plan, now)
+    scans_limit: dailyScanLimit(plan, now),
+    email_verified: plan.email_verified ?? false
   }
 }
